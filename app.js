@@ -31,8 +31,8 @@ const negocios = [
     id: 'cali-coffee-tour',
     nombre: 'Cali Coffee Tour',
     logo: 'assets/negocios/placeholder-logo.svg',
-    menu: 'assets/negocios/placeholder-menu.svg',
-    tipo: 'imagen',
+    menu: 'https://menupp.co/coffeemaster/venue/nu9KOuY1SXmbrxiFVKKL/menu/6f3a7cb9-74f9-4792-af2e-68527d230006',
+    tipo: 'externo',
   },
   // Para agregar un negocio nuevo, copiar este bloque y completar:
   // {
@@ -40,7 +40,8 @@ const negocios = [
   //   nombre: 'Nombre del Negocio',   <- como se verá en pantalla
   //   logo: 'assets/negocios/nombre-del-negocio/logo.webp',
   //   menu: 'assets/negocios/nombre-del-negocio/menu.jpg',
-  //   tipo: 'imagen',                 <- 'imagen' o 'pdf'
+  //   tipo: 'imagen',                 <- 'imagen', 'pdf' o 'externo'
+  //   // si tipo es 'externo', poner la URL completa en el campo menu
   // },
 ];
 
@@ -76,6 +77,11 @@ const modalContent = document.getElementById('modal-content');
 const btnCerrar = document.getElementById('modal-close');
 
 function abrirModal(negocio) {
+  if (negocio.tipo === 'externo') {
+    window.open(negocio.menu, '_blank', 'noopener,noreferrer');
+    return;
+  }
+
   const prevMedia = modalContent.querySelector('img, iframe');
   if (prevMedia) prevMedia.remove();
 
