@@ -1,35 +1,56 @@
 const negocios = [
   {
-    id: 'sie7e-pk2',
-    nombre: 'Sie7e Pk2',
-    logo: 'assets/negocios/placeholder-logo.svg',
-    menu: 'assets/negocios/placeholder-menu.svg',
+    id: 'la-cafetera',
+    nombre: 'La Cafetera',
+    categoria: '☕ Café',
+    logo: 'assets/negocios/la-cafetera/logo.jpg',
+    menu: 'assets/negocios/la-cafetera/menu.jpg',
+    tipo: 'imagen',
+  },
+  {
+    id: 'dejamu',
+    nombre: 'Dejamu',
+    categoria: '🍽 Fusión',
+    logo: 'assets/negocios/dejamu/logo.jpg',
+    menu: 'assets/negocios/dejamu/menu.jpg',
+    tipo: 'imagen',
+  },
+  {
+    id: 'satomi-bento',
+    nombre: 'Satomi Bento',
+    categoria: '🍱 Japonés',
+    logo: 'assets/negocios/satomi-bento/logo.jpg',
+    menu: 'assets/negocios/satomi-bento/menu.jpg',
+    tipo: 'imagen',
+  },
+  {
+    id: 'cafe-pintado',
+    nombre: 'Café Pintado',
+    categoria: '☕ Café',
+    logo: 'assets/negocios/cafe-pintado/logo.jpg',
+    menu: 'assets/negocios/cafe-pintado/menu.jpg',
     tipo: 'imagen',
   },
   {
     id: 'el-obelisco',
     nombre: 'El Obelisco',
-    logo: 'assets/negocios/placeholder-logo.svg',
-    menu: 'assets/negocios/placeholder-menu.svg',
+    categoria: '🫕 Caleño',
+    logo: 'assets/negocios/el-obelisco/logo.jpg',
+    menu: 'assets/negocios/el-obelisco/menu.jpg',
     tipo: 'imagen',
   },
   {
     id: 'el-bochinche',
     nombre: 'El Bochinche',
-    logo: 'assets/negocios/placeholder-logo.svg',
-    menu: 'assets/negocios/placeholder-menu.svg',
-    tipo: 'imagen',
-  },
-  {
-    id: 'sushi-break',
-    nombre: 'Sushi Break',
-    logo: 'assets/negocios/placeholder-logo.svg',
-    menu: 'assets/negocios/placeholder-menu.svg',
+    categoria: '🇨🇴 Colombiano',
+    logo: 'assets/negocios/el-bochinche/logo.jpg',
+    menu: 'assets/negocios/el-bochinche/menu.jpg',
     tipo: 'imagen',
   },
   {
     id: 'cali-coffee-tour',
     nombre: 'Cali Coffee Tour',
+    categoria: '☕ Especialidad',
     logo: 'assets/negocios/cali-coffee-tour/images.jpg',
     menu: 'https://menupp.co/coffeemaster/venue/nu9KOuY1SXmbrxiFVKKL/menu/6f3a7cb9-74f9-4792-af2e-68527d230006',
     tipo: 'externo',
@@ -38,7 +59,7 @@ const negocios = [
   // {
   //   id: 'nombre-del-negocio',       <- sin espacios ni tildes
   //   nombre: 'Nombre del Negocio',   <- como se verá en pantalla
-  //   logo: 'assets/negocios/nombre-del-negocio/logo.webp',
+  //   logo: 'assets/negocios/nombre-del-negocio/logo.jpg',
   //   menu: 'assets/negocios/nombre-del-negocio/menu.jpg',
   //   tipo: 'imagen',                 <- 'imagen', 'pdf' o 'externo'
   //   // si tipo es 'externo', poner la URL completa en el campo menu
@@ -48,15 +69,17 @@ const negocios = [
 /* ── Renderizar tarjetas ─────────────────────────────────── */
 function renderNegocios() {
   const grid = document.getElementById('negocios-grid');
-  grid.innerHTML = negocios.map((negocio) => `
+  grid.innerHTML = negocios.map((negocio, i) => `
     <article
       class="negocio-card"
       data-id="${negocio.id}"
       role="button"
       tabindex="0"
       aria-label="Ver menú de ${negocio.nombre}"
+      style="--i: ${i}"
     >
       <div class="card-img-wrap">
+        <span class="card-categoria">${negocio.categoria}</span>
         <img
           src="${negocio.logo}"
           alt="${negocio.nombre}"
@@ -64,7 +87,10 @@ function renderNegocios() {
           onerror="this.src='assets/negocios/placeholder-logo.svg'"
         />
       </div>
-      <p class="card-nombre">${negocio.nombre}</p>
+      <div class="card-info">
+        <p class="card-nombre">${negocio.nombre}</p>
+        <span class="card-hint">${negocio.tipo === 'externo' ? 'Abrir menú ↗' : 'Ver menú →'}</span>
+      </div>
     </article>
   `).join('');
 }
