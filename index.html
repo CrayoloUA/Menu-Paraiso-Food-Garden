@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#1a2e1a" />
+  <title>Paraíso Food Garden · Unicentro Cali</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Pinyon+Script&family=Montserrat:wght@400;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <!-- HEADER -->
+  <header class="site-header">
+    <div class="header-inner">
+      <img src="assets/logo-paradiso.svg" alt="Paraíso Food Garden" class="header-logo" />
+      <h1 class="header-title">Paraíso Food Garden</h1>
+      <p class="header-subtitle">Descubrí nuestros sabores</p>
+    </div>
+  </header>
+
+  <!-- GRILLA DE NEGOCIOS -->
+  <main>
+    <section class="negocios-grid" id="negocios-grid">
+      <!-- Las tarjetas se inyectan dinámicamente desde app.js -->
+    </section>
+  </main>
+
+  <!-- MODAL / LIGHTBOX -->
+  <div class="modal-overlay" id="modal-overlay" role="dialog" aria-modal="true" aria-label="Menú del negocio">
+    <div class="modal-content" id="modal-content">
+      <button class="modal-close" id="modal-close" aria-label="Cerrar menú">&#x2715;</button>
+      <!-- La imagen o iframe se inyecta dinámicamente -->
+    </div>
+  </div>
+
+  <!-- FOOTER -->
+  <footer class="site-footer">
+    <p>Paraíso Food Garden &middot; Unicentro Cali</p>
+  </footer>
+
+  <script src="app.js"></script>
+</body>
+</html>
