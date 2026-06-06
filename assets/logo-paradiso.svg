@@ -1,5 +1,60 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="200" height="200">
-  <circle cx="100" cy="100" r="95" fill="#1a2e1a" stroke="#c9a84c" stroke-width="4"/>
-  <text x="100" y="82" text-anchor="middle" font-family="Georgia, serif" font-size="20" fill="#c9a84c">Paraíso</text>
-  <text x="100" y="108" text-anchor="middle" font-family="Georgia, serif" font-size="12" fill="#f5f0e8">Food Garden</text>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200">
+  <defs>
+    <radialGradient id="lg1" cx="40%" cy="25%" r="65%">
+      <stop offset="0%" stop-color="#3a6b3a"/>
+      <stop offset="100%" stop-color="#1a3a1a"/>
+    </radialGradient>
+    <radialGradient id="lg2" cx="60%" cy="25%" r="65%">
+      <stop offset="0%" stop-color="#2d5a2d"/>
+      <stop offset="100%" stop-color="#142814"/>
+    </radialGradient>
+    <radialGradient id="lg3" cx="50%" cy="20%" r="70%">
+      <stop offset="0%" stop-color="#4a7a4a"/>
+      <stop offset="100%" stop-color="#1e3e1e"/>
+    </radialGradient>
+  </defs>
+
+  <!-- Hojas arriba -->
+  <path d="M100 2 C114 26 114 50 100 70 C86 50 86 26 100 2Z" fill="url(#lg3)"/>
+  <line x1="100" y1="5" x2="100" y2="68" stroke="#0f200f" stroke-width="0.7" opacity="0.7"/>
+  <path d="M78 7 C95 30 91 56 80 72 C62 52 62 26 78 7Z" fill="url(#lg2)"/>
+  <line x1="78" y1="9" x2="80" y2="70" stroke="#0f200f" stroke-width="0.6" opacity="0.6"/>
+  <path d="M122 7 C105 30 109 56 120 72 C138 52 138 26 122 7Z" fill="url(#lg1)"/>
+  <line x1="122" y1="9" x2="120" y2="70" stroke="#0f200f" stroke-width="0.6" opacity="0.6"/>
+
+  <!-- Hojas abajo -->
+  <path d="M100 198 C114 174 114 150 100 130 C86 150 86 174 100 198Z" fill="url(#lg3)"/>
+  <line x1="100" y1="195" x2="100" y2="132" stroke="#0f200f" stroke-width="0.7" opacity="0.7"/>
+  <path d="M78 193 C95 170 91 144 80 128 C62 148 62 174 78 193Z" fill="url(#lg2)"/>
+  <path d="M122 193 C105 170 109 144 120 128 C138 148 138 174 122 193Z" fill="url(#lg1)"/>
+
+  <!-- Hojas izquierda -->
+  <path d="M2 100 C26 86 50 86 70 100 C50 114 26 114 2 100Z" fill="url(#lg3)"/>
+  <line x1="5" y1="100" x2="68" y2="100" stroke="#0f200f" stroke-width="0.7" opacity="0.7"/>
+  <path d="M7 78 C30 95 56 91 72 80 C52 62 26 62 7 78Z" fill="url(#lg1)"/>
+  <line x1="9" y1="79" x2="70" y2="80" stroke="#0f200f" stroke-width="0.6" opacity="0.5"/>
+  <path d="M7 122 C30 105 56 109 72 120 C52 138 26 138 7 122Z" fill="url(#lg2)"/>
+
+  <!-- Hojas derecha -->
+  <path d="M198 100 C174 86 150 86 130 100 C150 114 174 114 198 100Z" fill="url(#lg3)"/>
+  <line x1="195" y1="100" x2="132" y2="100" stroke="#0f200f" stroke-width="0.7" opacity="0.7"/>
+  <path d="M193 78 C170 95 144 91 128 80 C148 62 174 62 193 78Z" fill="url(#lg2)"/>
+  <path d="M193 122 C170 105 144 109 128 120 C148 138 174 138 193 122Z" fill="url(#lg1)"/>
+
+  <!-- Hojas diagonales (esquinas) -->
+  <path d="M28 28 C50 46 52 72 40 88 C18 72 14 44 28 28Z" fill="url(#lg2)"/>
+  <line x1="29" y1="30" x2="41" y2="86" stroke="#0f200f" stroke-width="0.6" opacity="0.5"/>
+  <path d="M172 28 C150 46 148 72 160 88 C182 72 186 44 172 28Z" fill="url(#lg1)"/>
+  <line x1="171" y1="30" x2="159" y2="86" stroke="#0f200f" stroke-width="0.6" opacity="0.5"/>
+  <path d="M28 172 C50 154 52 128 40 112 C18 128 14 156 28 172Z" fill="url(#lg1)"/>
+  <path d="M172 172 C150 154 148 128 160 112 C182 128 186 156 172 172Z" fill="url(#lg2)"/>
+
+  <!-- Círculo principal -->
+  <circle cx="100" cy="100" r="60" fill="#07100a"/>
+  <circle cx="100" cy="100" r="60" fill="none" stroke="#c9a84c" stroke-width="3"/>
+  <circle cx="100" cy="100" r="55" fill="none" stroke="rgba(201,168,76,0.2)" stroke-width="0.8"/>
+
+  <!-- Texto -->
+  <text x="100" y="96" text-anchor="middle" font-family="Georgia, 'Times New Roman', serif" font-size="21" fill="#c9a84c" font-style="italic">Paraíso</text>
+  <text x="100" y="117" text-anchor="middle" font-family="Georgia, serif" font-size="9" fill="#e0d8c8" letter-spacing="2.8">Food Garden</text>
 </svg>
