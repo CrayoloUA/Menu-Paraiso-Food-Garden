@@ -2,7 +2,7 @@ const negocios = [
   {
     id: 'la-cafetera',
     nombre: 'La Cafetera',
-    categoria: '☕ Café',
+    categoria: 'Café',
     logo: 'assets/negocios/la-cafetera/logo.jpg',
     menu: 'assets/negocios/la-cafetera/menu.jpg',
     tipo: 'imagen',
@@ -10,7 +10,7 @@ const negocios = [
   {
     id: 'dejamu',
     nombre: 'Dejamu',
-    categoria: '🍽 Fusión',
+    categoria: 'Fusión',
     logo: 'assets/negocios/dejamu/logo.jpg',
     menu: 'assets/negocios/dejamu/menu.jpg',
     tipo: 'imagen',
@@ -18,7 +18,7 @@ const negocios = [
   {
     id: 'satomi-bento',
     nombre: 'Satomi Bento',
-    categoria: '🍱 Japonés',
+    categoria: 'Japonés',
     logo: 'assets/negocios/satomi-bento/logo.jpg',
     menu: 'assets/negocios/satomi-bento/menu.jpg',
     tipo: 'imagen',
@@ -26,7 +26,7 @@ const negocios = [
   {
     id: 'cafe-pintado',
     nombre: 'Café Pintado',
-    categoria: '☕ Café',
+    categoria: 'Café',
     logo: 'assets/negocios/cafe-pintado/logo.jpg',
     menu: 'assets/negocios/cafe-pintado/menu.jpg',
     tipo: 'imagen',
@@ -34,7 +34,7 @@ const negocios = [
   {
     id: 'el-obelisco',
     nombre: 'El Obelisco',
-    categoria: '🫕 Caleño',
+    categoria: 'Caleño',
     logo: 'assets/negocios/el-obelisco/logo.jpg',
     menu: 'assets/negocios/el-obelisco/menu.jpg',
     tipo: 'imagen',
@@ -42,7 +42,7 @@ const negocios = [
   {
     id: 'el-bochinche',
     nombre: 'El Bochinche',
-    categoria: '🇨🇴 Colombiano',
+    categoria: 'Colombiano',
     logo: 'assets/negocios/el-bochinche/logo.jpg',
     menu: 'assets/negocios/el-bochinche/menu.jpg',
     tipo: 'imagen',
@@ -50,7 +50,8 @@ const negocios = [
   {
     id: 'cali-coffee-tour',
     nombre: 'Cali Coffee Tour',
-    categoria: '☕ Especialidad',
+    categoria: 'Café',
+    destacado: true,
     logo: 'assets/negocios/cali-coffee-tour/images.jpg',
     menu: 'https://menupp.co/coffeemaster/venue/nu9KOuY1SXmbrxiFVKKL/menu/6f3a7cb9-74f9-4792-af2e-68527d230006',
     tipo: 'externo',
@@ -71,8 +72,9 @@ function renderNegocios() {
   const grid = document.getElementById('negocios-grid');
   grid.innerHTML = negocios.map((negocio, i) => `
     <article
-      class="negocio-card"
+      class="negocio-card${negocio.destacado ? ' destacada' : ''}"
       data-id="${negocio.id}"
+      data-categoria="${negocio.categoria}"
       role="button"
       tabindex="0"
       aria-label="Ver menú de ${negocio.nombre}"
@@ -95,7 +97,35 @@ function renderNegocios() {
   `).join('');
 }
 
+function renderFiltros() {
+  const categorias = ['Todos', ...new Set(negocios.map((n) => n.categoria))];
+  const bar = document.createElement('div');
+  bar.className = 'filtros-bar';
+  bar.id = 'filtros-bar';
+  bar.innerHTML = categorias.map((cat) => `
+    <button class="filtro-btn${cat === 'Todos' ? ' activo' : ''}" data-cat="${cat}">
+      ${cat}
+    </button>
+  `).join('');
+
+  const main = document.querySelector('main');
+  main.insertBefore(bar, document.getElementById('negocios-grid'));
+
+  bar.addEventListener('click', (e) => {
+    const btn = e.target.closest('.filtro-btn');
+    if (!btn) return;
+    bar.querySelectorAll('.filtro-btn').forEach((b) => b.classList.remove('activo'));
+    btn.classList.add('activo');
+    const cat = btn.dataset.cat;
+    document.querySelectorAll('.negocio-card').forEach((card) => {
+      const match = cat === 'Todos' || card.dataset.categoria === cat;
+      card.style.display = match ? '' : 'none';
+    });
+  });
+}
+
 renderNegocios();
+renderFiltros();
 
 /* ── Lightbox ────────────────────────────────────────────── */
 const overlay = document.getElementById('modal-overlay');

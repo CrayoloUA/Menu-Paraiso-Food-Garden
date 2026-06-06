@@ -84,6 +84,43 @@ img {
   font-style: italic;
 }
 
+/* ─── Barra de filtros ───────────────────────────────────── */
+.filtros-bar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  padding: 1.25rem 1rem 0.25rem;
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.filtro-btn {
+  font-family: var(--font-body);
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: rgba(245,240,232,0.55);
+  background: transparent;
+  border: 1px solid rgba(245,240,232,0.18);
+  border-radius: 20px;
+  padding: 0.35rem 0.85rem;
+  cursor: pointer;
+  transition: color 0.18s ease, border-color 0.18s ease, background 0.18s ease;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.filtro-btn:hover {
+  color: var(--color-gold);
+  border-color: rgba(201,168,76,0.45);
+}
+
+.filtro-btn.activo {
+  color: var(--color-bg);
+  background-color: var(--color-gold);
+  border-color: var(--color-gold);
+}
+
 /* ─── Grilla de negocios ─────────────────────────────────── */
 .negocios-grid {
   display: grid;
@@ -215,6 +252,47 @@ img {
 .negocio-card:hover .card-hint {
   color: var(--color-gold);
   transform: translateX(2px);
+}
+
+/* ─── Tarjeta destacada ──────────────────────────────────── */
+.negocio-card.destacada {
+  grid-column: span 2;
+}
+
+@media (min-width: 600px) {
+  .negocio-card.destacada {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-column: span 2;
+  }
+
+  .negocio-card.destacada .card-img-wrap {
+    aspect-ratio: auto;
+    min-height: 220px;
+    height: 100%;
+  }
+
+  .negocio-card.destacada .card-info {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    padding: 1.25rem 1rem;
+    gap: 0.4rem;
+  }
+
+  .negocio-card.destacada .card-categoria {
+    font-size: 0.68rem;
+    padding: 0.22rem 0.6rem;
+  }
+
+  .negocio-card.destacada .card-nombre {
+    font-size: 1rem;
+    line-height: 1.3;
+  }
+
+  .negocio-card.destacada .card-hint {
+    font-size: 0.68rem;
+  }
 }
 
 /* ─── Modal / Lightbox ───────────────────────────────────── */
