@@ -1,3 +1,74 @@
+/* ─── Splash de bienvenida ───────────────────────────────── */
+.splash {
+  position: fixed;
+  inset: 0;
+  background-color: #080f08;
+  z-index: 9999;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.6rem;
+  animation: splashSalida 0.55s ease-in 1.9s forwards;
+  pointer-events: none;
+}
+
+@keyframes splashSalida {
+  from { opacity: 1; }
+  to   { opacity: 0; }
+}
+
+.splash-logo {
+  width: 96px;
+  height: 96px;
+  opacity: 0;
+  animation: splashEntrada 0.55s cubic-bezier(0.22,1,0.36,1) 0.15s forwards;
+  margin-bottom: 0.5rem;
+}
+
+.splash-bienvenido {
+  font-family: 'Montserrat', sans-serif;
+  font-size: 0.68rem;
+  font-weight: 600;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: rgba(245,240,232,0.45);
+  opacity: 0;
+  animation: splashEntrada 0.45s ease-out 0.4s forwards;
+}
+
+.splash-titulo {
+  font-family: 'Pinyon Script', cursive;
+  font-size: 2.8rem;
+  font-weight: 400;
+  color: #c9a84c;
+  line-height: 1.1;
+  opacity: 0;
+  text-shadow: 0 2px 24px rgba(201,168,76,0.25);
+  animation: splashEntrada 0.55s cubic-bezier(0.22,1,0.36,1) 0.58s forwards;
+}
+
+.splash-lugar {
+  font-family: 'Montserrat', sans-serif;
+  font-size: 0.62rem;
+  font-weight: 400;
+  letter-spacing: 0.18em;
+  color: rgba(245,240,232,0.3);
+  opacity: 0;
+  animation: splashEntrada 0.4s ease-out 0.85s forwards;
+}
+
+@keyframes splashEntrada {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
 /* ─── Variables ──────────────────────────────────────────── */
 :root {
   --color-bg:       #1a2e1a;

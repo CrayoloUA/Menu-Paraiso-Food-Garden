@@ -189,3 +189,18 @@ overlay.addEventListener('click', (e) => {
 document.addEventListener('keydown', (e) => {
   if (e.key === 'Escape') cerrarModal();
 });
+
+// Swipe hacia abajo para cerrar el lightbox en móvil
+let touchStartY = 0;
+overlay.addEventListener('touchstart', (e) => {
+  touchStartY = e.touches[0].clientY;
+}, { passive: true });
+overlay.addEventListener('touchend', (e) => {
+  if (e.changedTouches[0].clientY - touchStartY > 80) cerrarModal();
+}, { passive: true });
+
+/* ── Splash de bienvenida ────────────────────────────────── */
+const splash = document.getElementById('splash');
+if (splash) {
+  setTimeout(() => splash.remove(), 2500);
+}
