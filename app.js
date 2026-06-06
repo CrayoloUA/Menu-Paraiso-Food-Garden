@@ -30,7 +30,7 @@ const negocios = [
   {
     id: 'cali-coffee-tour',
     nombre: 'Cali Coffee Tour',
-    logo: 'assets/negocios/placeholder-logo.svg',
+    logo: 'assets/negocios/cali-coffee-tour/images.jpg',
     menu: 'https://menupp.co/coffeemaster/venue/nu9KOuY1SXmbrxiFVKKL/menu/6f3a7cb9-74f9-4792-af2e-68527d230006',
     tipo: 'externo',
   },
