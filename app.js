@@ -20,8 +20,8 @@ const negocios = [
     nombre: 'Satomi Bento',
     categoria: 'Japonés',
     logo: 'assets/negocios/satomi-bento/SATOMI-1.png',
-    menu: 'assets/negocios/satomi-bento/menu.jpg',
-    tipo: 'imagen',
+    menu: 'https://toteat.app/r/co/Satomi-Bento/7259/menu',
+    tipo: 'externo',
   },
   {
     id: 'cafe-pintado',
