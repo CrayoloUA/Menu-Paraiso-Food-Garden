@@ -299,71 +299,64 @@ function cerrarModal() {
 function initPinchZoom(viewer, wrapper) {
   let scale = 1;
   let tx = 0, ty = 0;
-
-  // Estado del gesto activo
   let isPinching = false;
   let isPanning  = false;
-
-  // Valores al inicio del gesto (se fijan en touchstart)
-  let startScale = 1;
-  let startDist  = 0;
-  let startTx = 0, startTy = 0;
-  let pinchOriginX = 0, pinchOriginY = 0;  // punto medio de los dedos en coords del viewer
+  let startScale = 1, startDist = 0;
+  let startTx = 0,  startTy = 0;
+  let pinchOriginX = 0, pinchOriginY = 0;
   let panStartX = 0, panStartY = 0;
+  let swipeStartY = 0;   // para swipe-to-close cuando scale === 1
 
   function getDist(t) {
     return Math.hypot(t[0].clientX - t[1].clientX, t[0].clientY - t[1].clientY);
   }
-
   function clamp() {
     const minX = Math.min(0, viewer.clientWidth  * (1 - scale));
     const minY = Math.min(0, viewer.clientHeight * (1 - scale));
     tx = Math.max(minX, Math.min(0, tx));
     ty = Math.max(minY, Math.min(0, ty));
   }
-
   function apply() {
     wrapper.style.transform = `translate(${tx}px,${ty}px) scale(${scale})`;
   }
 
+  // ── touchstart ──────────────────────────────────────────
   viewer.addEventListener('touchstart', (e) => {
+    // El viewer toma posesión de TODOS sus touches —
+    // el overlay nunca procesa touchend si no recibió touchstart
+    e.stopPropagation();
+
     if (e.touches.length === 2) {
-      // Pellizco — siempre captura, aunque haya 1 dedo ya
       e.preventDefault();
-      e.stopPropagation();          // evita swipe-down del overlay
-      isPinching = true;
-      isPanning  = false;
-      startDist  = getDist(e.touches);
-      startScale = scale;
-      startTx = tx; startTy = ty;
+      isPinching = true; isPanning = false;
+      startDist = getDist(e.touches);
+      startScale = scale; startTx = tx; startTy = ty;
       const r = viewer.getBoundingClientRect();
       pinchOriginX = (e.touches[0].clientX + e.touches[1].clientX) / 2 - r.left;
       pinchOriginY = (e.touches[0].clientY + e.touches[1].clientY) / 2 - r.top;
-    } else if (e.touches.length === 1 && scale > 1) {
-      // Un dedo con zoom activo → panning
-      e.preventDefault();
-      e.stopPropagation();          // evita swipe-down del overlay
-      isPanning  = true;
-      panStartX  = e.touches[0].clientX;
-      panStartY  = e.touches[0].clientY;
-      startTx = tx; startTy = ty;
+    } else if (e.touches.length === 1) {
+      swipeStartY = e.touches[0].clientY;
+      if (scale > 1) {
+        e.preventDefault();
+        isPanning = true;
+        panStartX = e.touches[0].clientX;
+        panStartY = e.touches[0].clientY;
+        startTx = tx; startTy = ty;
+      }
     }
   }, { passive: false });
 
+  // ── touchmove ───────────────────────────────────────────
   viewer.addEventListener('touchmove', (e) => {
+    e.stopPropagation();
     if (isPinching && e.touches.length === 2) {
       e.preventDefault();
-      const newScale = Math.max(1, Math.min(4, startScale * getDist(e.touches) / startDist));
-
-      // Mantener el punto bajo los dedos fijo en el contenido
-      // Punto en espacio de contenido cuando empezó el gesto:
-      const contentX = (pinchOriginX - startTx) / startScale;
-      const contentY = (pinchOriginY - startTy) / startScale;
-      // Nuevo translate para que ese punto siga bajo los dedos:
-      tx = pinchOriginX - contentX * newScale;
-      ty = pinchOriginY - contentY * newScale;
-      scale = newScale;
-
+      const ns = Math.max(1, Math.min(4, startScale * getDist(e.touches) / startDist));
+      const cx = (pinchOriginX - startTx) / startScale;
+      const cy = (pinchOriginY - startTy) / startScale;
+      tx = pinchOriginX - cx * ns;
+      ty = pinchOriginY - cy * ns;
+      scale = ns;
       if (scale === 1) { tx = 0; ty = 0; } else clamp();
       apply();
     } else if (isPanning && e.touches.length === 1 && scale > 1) {
@@ -375,38 +368,46 @@ function initPinchZoom(viewer, wrapper) {
     }
   }, { passive: false });
 
+  // ── touchend ────────────────────────────────────────────
+  let lastTap = 0;
   viewer.addEventListener('touchend', (e) => {
+    // stopPropagation aquí es la clave: el overlay nunca ve este evento
+    e.stopPropagation();
+
     if (e.touches.length < 2) isPinching = false;
     if (e.touches.length === 0) {
       isPanning = false;
-      // Si el scale quedó por debajo de 1 (no debería), resetear
       if (scale < 1) { scale = 1; tx = 0; ty = 0; apply(); }
-    }
-  });
 
-  // Doble tap: zoom 2.5x centrado en el tap, o resetear
-  let lastTap = 0;
-  viewer.addEventListener('touchend', (e) => {
-    if (e.touches.length > 0) return;
-    const now = Date.now();
-    if (now - lastTap < 300) {
-      e.preventDefault();
-      if (scale > 1) {
-        scale = 1; tx = 0; ty = 0;
-      } else {
-        const r    = viewer.getBoundingClientRect();
-        const tapX = e.changedTouches[0].clientX - r.left;
-        const tapY = e.changedTouches[0].clientY - r.top;
-        const ns   = 2.5;
-        // El punto bajo el dedo (en escala 1) debe quedar fijo
-        tx    = tapX - tapX * ns;
-        ty    = tapY - tapY * ns;
-        scale = ns;
-        clamp();
+      const now = Date.now();
+      const deltaY = e.changedTouches[0].clientY - swipeStartY;
+
+      // Doble tap → zoom 2.5x o resetear
+      if (now - lastTap < 300) {
+        e.preventDefault();
+        if (scale > 1) {
+          scale = 1; tx = 0; ty = 0;
+        } else {
+          const r = viewer.getBoundingClientRect();
+          const tapX = e.changedTouches[0].clientX - r.left;
+          const tapY = e.changedTouches[0].clientY - r.top;
+          const ns = 2.5;
+          tx = tapX - tapX * ns;
+          ty = tapY - tapY * ns;
+          scale = ns;
+          clamp();
+        }
+        apply();
+        lastTap = 0;   // reset para no re-disparar
+        return;
       }
-      apply();
+      lastTap = now;
+
+      // Swipe hacia abajo para cerrar (solo sin zoom)
+      if (scale === 1 && deltaY > 80) {
+        cerrarModal();
+      }
     }
-    lastTap = now;
   });
 }
 
