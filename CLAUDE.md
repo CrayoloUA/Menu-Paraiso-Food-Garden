@@ -4,7 +4,8 @@
 
 Landing page mobile-first para **Paraíso Food Garden**, food court ubicado en **Unicentro Cali**. Los clientes llegan escaneando un **código QR** físico en el local. La página muestra los logos de cada negocio del food court y al tocar cada uno, abre el menú del restaurante directamente en la misma app.
 
-**Hosting:** Netlify Drop (gratis, drag & drop).
+**Hosting:** Netlify (conectado a GitHub, auto-deploy en cada push).
+**Repo:** https://github.com/CrayoloUA/Menu-Paraiso-Food-Garden
 **Stack:** HTML + CSS + JavaScript puro — sin frameworks, sin servidor, sin dependencias de npm.
 
 ---
@@ -14,48 +15,44 @@ Landing page mobile-first para **Paraíso Food Garden**, food court ubicado en *
 ```
 Menu/
 ├── index.html          # Página principal
-├── app.js              # Lógica: tarjetas, filtros, modal, menús
-├── menus.js            # Datos de los menús de cada negocio (EN CONSTRUCCIÓN)
+├── app.js              # Lógica: tarjetas, filtros, modal, visor de menús
 ├── style.css           # Todos los estilos
 ├── CLAUDE.md           # Este archivo
-├── assets/
-│   ├── logo-paradiso.svg           # Logo principal del food court
-│   ├── negocios/                   # Logos de cada negocio
-│   │   ├── la-cafetera/
-│   │   │   ├── Cafetera.jpeg       # Logo
-│   │   │   └── menu.pdf            # Menú escaneado (solo referencia)
-│   │   ├── dejamu/
-│   │   ├── satomi-bento/
-│   │   ├── cafe-pintado/
-│   │   ├── el-obelisco/
-│   │   ├── el-bochinche/
-│   │   ├── cali-coffee-tour/
-│   │   ├── sabor-peruano/
-│   │   ├── uepa-ve/
-│   │   └── monster-park/
-│   └── pdfjs/                      # PDF.js v4 (instalado, actualmente sin uso)
-└── docs/
-    └── superpowers/
-        ├── specs/                  # Diseño original
-        └── plans/                  # Plan de implementación
+└── assets/
+    ├── logo-paradiso.svg           # Logo principal del food court
+    ├── negocios/                   # Logos e imágenes de menú de cada negocio
+    │   ├── placeholder-logo.svg    # Fallback cuando falla un logo
+    │   ├── la-cafetera/
+    │   │   ├── Cafetera.jpeg                 # Logo
+    │   │   └── menu_page-0001 (1).jpg        # Imagen del menú
+    │   ├── dejamu/
+    │   ├── satomi-bento/
+    │   ├── cafe-pintado/
+    │   ├── el-obelisco/
+    │   ├── el-bochinche/
+    │   ├── cali-coffee-tour/
+    │   ├── sabor-peruano/
+    │   ├── uepa-ve/
+    │   └── monster-park/
+    └── pdfjs/                      # PDF.js v4 (disponible si se necesita)
 ```
 
 ---
 
 ## Negocios registrados
 
-| ID | Nombre | Categoría | Tipo menú |
-|----|--------|-----------|-----------|
-| `la-cafetera` | La Cafetera | Café | HTML (transcrito) |
-| `dejamu` | Dejamu | Fusión | pendiente |
-| `satomi-bento` | Satomi Bento | Japonés | pendiente |
-| `cafe-pintado` | Café Pintado | Café | pendiente |
-| `el-obelisco` | El Obelisco | Caleño | pendiente |
-| `el-bochinche` | El Bochinche | Colombiano | pendiente |
-| `cali-coffee-tour` | Cali Coffee Tour | Café | externo (Menupp.co) |
-| `sabor-peruano` | Sabor Peruano | Peruano | pendiente |
-| `uepa-ve` | Mirá! Uepa'Ve | Wraps & Arepas | pendiente |
-| `monster-park` | Monster Park | Entretenimiento | pendiente |
+| ID | Nombre | Categoría | Tipo menú | Estado |
+|----|--------|-----------|-----------|--------|
+| `la-cafetera` | La Cafetera | Café | `imagen` | Listo |
+| `dejamu` | Dejamu | Fusión | `imagen` | Pendiente imagen |
+| `satomi-bento` | Satomi Bento | Japonés | `externo` | Listo (Toteat) |
+| `cafe-pintado` | Café Pintado | Café | `imagen` | Pendiente imagen |
+| `el-obelisco` | El Obelisco | Caleño | `imagen` | Pendiente imagen |
+| `el-bochinche` | El Bochinche | Colombiano | `imagen` | Pendiente imagen |
+| `cali-coffee-tour` | Cali Coffee Tour | Café | `externo` | Listo (Menupp.co) |
+| `sabor-peruano` | Sabor Peruano | Peruano | `imagen` | Pendiente imagen |
+| `uepa-ve` | Mirá! Uepa'Ve | Wraps & Arepas | `imagen` | Pendiente imagen |
+| `monster-park` | Monster Park | Entretenimiento | `imagen` | Pendiente imagen |
 
 ---
 
@@ -68,44 +65,41 @@ Menu/
 - La tarjeta de **Cali Coffee Tour** tiene `destacado: true` → ocupa 2 columnas con layout horizontal
 
 ### Tipos de menú (`tipo` en cada negocio)
+
 | Tipo | Comportamiento |
 |------|----------------|
-| `'html'` | Renderiza el menú desde `menus.js` dentro del modal (preferido para móvil) |
-| `'imagen'` | Abre una imagen del menú en lightbox |
-| `'pdf'` | Abre el PDF con PDF.js dentro del modal |
+| `'imagen'` | Abre la imagen del menú en visor fullscreen con pinch-to-zoom |
 | `'externo'` | Abre una URL externa en nueva pestaña |
+| `'pdf'` | Abre el PDF con PDF.js dentro del modal (disponible, sin uso actual) |
 
-### Modal / Lightbox
-- Se abre al tocar cualquier tarjeta
-- Se cierra con el botón X, tocando fuera, presionando Escape, o haciendo swipe hacia abajo (>80px)
-- Para tipo `'html'` renderiza el menú desde `menus.js`
+### Visor de menú (tipo `imagen`)
+- Se abre fullscreen en móvil (sin márgenes)
+- Pinch-to-zoom hasta 4x, centrado en el punto donde están los dedos
+- Panning con un dedo cuando hay zoom activo
+- Doble tap para zoom 2.5x o resetear
+- Solo se cierra con el botón X (el swipe no cierra para evitar accidentes)
+- Zoom del 4% aplicado en CSS para recortar bordes blancos de PDFs exportados como imagen
+
+### Menú externo (tipo `externo`)
+- Abre la URL en nueva pestaña
+- La tarjeta muestra "Abrir menú" en vez de "Ver menú"
 
 ---
 
-## Plan actual: transcribir menús en HTML
+## Decisión de diseño: menús como imágenes JPG
 
-**Decisión tomada:** Los PDFs se ven muy mal en celular. En vez de usar PDFs o imágenes, se va a transcribir cada menú como datos estructurados en `menus.js` y se renderizarán como HTML estilizado dentro del modal.
+Los PDFs se ven mal en celular y son difíciles de navegar. La solución adoptada:
 
-### Estructura de `menus.js`
-```javascript
-const menus = {
-  'la-cafetera': {
-    secciones: [
-      {
-        titulo: 'Nombre de la sección',
-        nota: 'Nota opcional debajo del título',       // opcional
-        items: [
-          { nombre: 'Producto', precio: 5500 },
-          { nombre: 'Producto con descripción', precio: 9800, desc: 'descripción corta' },
-        ]
-      }
-    ]
-  }
-};
-```
+- **Menús con texto/precios simples** → imagen JPG del menú
+- **Menús con app propia** → enlace externo (`tipo: 'externo'`)
 
-### Función de render del menú HTML
-Se llama desde `abrirModal()` en `app.js` cuando `negocio.tipo === 'html'`. Genera una lista con secciones, nombres y precios formateados en pesos colombianos.
+### Cómo preparar una imagen de menú desde un PDF
+1. Abrir el PDF
+2. Exportar cada página como JPG (800px de ancho, calidad 80%)
+3. Guardar en `assets/negocios/<id>/menu.jpg`
+4. En `app.js` poner `tipo: 'imagen'`
+
+Los bordes blancos del PDF se recortan automáticamente con el zoom de 4% del visor.
 
 ---
 
@@ -114,45 +108,61 @@ Se llama desde `abrirModal()` en `app.js` cuando `negocio.tipo === 'html'`. Gene
 - **Paleta:** Verde selva oscuro `#1a2e1a` + dorado `#c9a84c` + crema `#f5f0e8`
 - **Tipografía:** Pinyon Script (títulos cursivos) + Montserrat (cuerpo)
 - **Mobile-first:** Grid 2 col → 3 col (600px+) → 4 col (900px+)
-- **Animaciones:** Entrada de tarjetas escalonada, hover con glow dorado
-- **Filtros:** Scroll horizontal (no wrap) para manejar muchas categorías en móvil
+- **Animaciones:** Splash de bienvenida, entrada escalonada de tarjetas, hover con glow dorado
+- **Filtros:** Scroll horizontal sin wrap para manejar muchas categorías en móvil
 
 ---
 
 ## Cómo agregar un negocio nuevo
 
 1. Crear carpeta `assets/negocios/<id-del-negocio>/`
-2. Copiar el logo ahí (JPG recomendado, max 600px, ~30KB)
-3. Agregar entrada en el array `negocios[]` de `app.js`
-4. Si el menú es HTML, agregar su entrada en `menus.js`
+2. Copiar el logo (JPG recomendado, max 600px, ~30KB)
+3. Copiar la imagen del menú como `menu.jpg` (800px ancho, 80% calidad)
+4. Agregar entrada en el array `negocios[]` de `app.js`
 
 ```javascript
-// En app.js — ejemplo
+// En app.js — ejemplo negocio con imagen
 {
   id: 'nuevo-negocio',
   nombre: 'Nombre del Negocio',
   categoria: 'Categoría',
   logo: 'assets/negocios/nuevo-negocio/logo.jpg',
-  menu: 'html',           // para menú transcrito
-  tipo: 'html',
+  menu: 'assets/negocios/nuevo-negocio/menu.jpg',
+  tipo: 'imagen',
+},
+
+// En app.js — ejemplo negocio con menú externo
+{
+  id: 'nuevo-negocio',
+  nombre: 'Nombre del Negocio',
+  categoria: 'Categoría',
+  logo: 'assets/negocios/nuevo-negocio/logo.jpg',
+  menu: 'https://url-del-menu.com',
+  tipo: 'externo',
 },
 ```
 
 ---
 
-## Cómo actualizar un precio o ítem del menú
+## Cómo actualizar la imagen del menú de un negocio
 
-Editar directamente `menus.js` — buscar el negocio por su ID y modificar el ítem correspondiente.
+1. Preparar la nueva imagen (800px ancho, 80% calidad JPG)
+2. Reemplazar el archivo en `assets/negocios/<id>/menu.jpg`
+3. Si el nombre del archivo cambia, actualizar el campo `menu:` en `app.js`
+4. Hacer commit y push — Netlify actualiza automáticamente
 
 ---
 
-## Deploy a Netlify
+## Deploy
 
-1. Abrir [netlify.com/drop](https://netlify.com/drop)
-2. Arrastrar la carpeta `Menu/` completa al área de drop
-3. Netlify genera una URL pública automáticamente
-4. Con esa URL, generar el QR en [qr-code-generator.com](https://www.qr-code-generator.com) o similar
-5. Imprimir el QR y pegarlo en el local
+El proyecto está conectado a Netlify via GitHub:
+- Cada `git push` a `master` despliega automáticamente
+- No se necesita arrastrar archivos manualmente
+
+Para generar el QR una vez desplegado:
+- Tomar la URL de Netlify
+- Generar el QR en [qr-code-generator.com](https://www.qr-code-generator.com)
+- Imprimir y pegar en el local
 
 ---
 
@@ -165,7 +175,20 @@ Editar directamente `menus.js` — buscar el negocio por su ID y modificar el í
 - [x] Splash de bienvenida
 - [x] Optimización de imágenes (comprimidas ~60-70%)
 - [x] Optimización mobile (touch targets, viewport, fuentes subsetadas)
-- [x] PDF.js instalado (disponible si se necesita)
-- [ ] `menus.js` — transcribir menús de cada negocio (EN PROGRESO)
-- [ ] Deploy a Netlify
-- [ ] Generación del QR
+- [x] Visor fullscreen en móvil para imágenes de menú
+- [x] Pinch-to-zoom en visor de imágenes
+- [x] Zoom centrado en el punto de pellizco
+- [x] Panning al arrastrar con un dedo con zoom activo
+- [x] Doble tap para zoom/reset
+- [x] Repositorio en GitHub con auto-deploy a Netlify
+- [x] La Cafetera — imagen del menú lista
+- [x] Satomi Bento — menú externo (Toteat)
+- [x] Cali Coffee Tour — menú externo (Menupp.co)
+- [ ] Dejamu — pendiente imagen del menú
+- [ ] Café Pintado — pendiente imagen del menú
+- [ ] El Obelisco — pendiente imagen del menú
+- [ ] El Bochinche — pendiente imagen del menú
+- [ ] Sabor Peruano — pendiente imagen del menú
+- [ ] Mirá! Uepa'Ve — pendiente imagen del menú
+- [ ] Monster Park — pendiente imagen del menú
+- [ ] Generación del QR final
