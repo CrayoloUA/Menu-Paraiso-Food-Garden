@@ -295,97 +295,116 @@ function cerrarModal() {
   if (prevMedia) prevMedia.remove();
 }
 
-/* ── Pinch-to-zoom para el visor PDF ─────────────────────── */
+/* ── Pinch-to-zoom para visores PDF e imagen ─────────────── */
 function initPinchZoom(viewer, wrapper) {
   let scale = 1;
-  let startScale = 1;
-  let startDist = 0;
-  let translateX = 0, translateY = 0;
-  let startX = 0, startY = 0;
-  let lastTouchX = 0, lastTouchY = 0;
+  let tx = 0, ty = 0;
+
+  // Estado del gesto activo
   let isPinching = false;
-  let isPanning = false;
+  let isPanning  = false;
 
-  function clampTranslate() {
-    const rect = wrapper.getBoundingClientRect();
-    const vw = viewer.clientWidth;
-    const vh = viewer.clientHeight;
-    const maxX = 0;
-    const minX = Math.min(0, vw - rect.width);
-    const maxY = 0;
-    const minY = Math.min(0, vh - rect.height);
-    translateX = Math.max(minX, Math.min(maxX, translateX));
-    translateY = Math.max(minY, Math.min(maxY, translateY));
+  // Valores al inicio del gesto (se fijan en touchstart)
+  let startScale = 1;
+  let startDist  = 0;
+  let startTx = 0, startTy = 0;
+  let pinchOriginX = 0, pinchOriginY = 0;  // punto medio de los dedos en coords del viewer
+  let panStartX = 0, panStartY = 0;
+
+  function getDist(t) {
+    return Math.hypot(t[0].clientX - t[1].clientX, t[0].clientY - t[1].clientY);
   }
 
-  function applyTransform() {
-    wrapper.style.transform = `translate(${translateX}px, ${translateY}px) scale(${scale})`;
+  function clamp() {
+    const minX = Math.min(0, viewer.clientWidth  * (1 - scale));
+    const minY = Math.min(0, viewer.clientHeight * (1 - scale));
+    tx = Math.max(minX, Math.min(0, tx));
+    ty = Math.max(minY, Math.min(0, ty));
   }
 
-  function getDist(touches) {
-    const dx = touches[0].clientX - touches[1].clientX;
-    const dy = touches[0].clientY - touches[1].clientY;
-    return Math.sqrt(dx * dx + dy * dy);
+  function apply() {
+    wrapper.style.transform = `translate(${tx}px,${ty}px) scale(${scale})`;
   }
 
   viewer.addEventListener('touchstart', (e) => {
     if (e.touches.length === 2) {
+      // Pellizco — siempre captura, aunque haya 1 dedo ya
+      e.preventDefault();
+      e.stopPropagation();          // evita swipe-down del overlay
       isPinching = true;
-      isPanning = false;
-      startDist = getDist(e.touches);
+      isPanning  = false;
+      startDist  = getDist(e.touches);
       startScale = scale;
-      e.preventDefault();
+      startTx = tx; startTy = ty;
+      const r = viewer.getBoundingClientRect();
+      pinchOriginX = (e.touches[0].clientX + e.touches[1].clientX) / 2 - r.left;
+      pinchOriginY = (e.touches[0].clientY + e.touches[1].clientY) / 2 - r.top;
     } else if (e.touches.length === 1 && scale > 1) {
-      isPanning = true;
-      startX = translateX;
-      startY = translateY;
-      lastTouchX = e.touches[0].clientX;
-      lastTouchY = e.touches[0].clientY;
+      // Un dedo con zoom activo → panning
       e.preventDefault();
+      e.stopPropagation();          // evita swipe-down del overlay
+      isPanning  = true;
+      panStartX  = e.touches[0].clientX;
+      panStartY  = e.touches[0].clientY;
+      startTx = tx; startTy = ty;
     }
   }, { passive: false });
 
   viewer.addEventListener('touchmove', (e) => {
     if (isPinching && e.touches.length === 2) {
-      const dist = getDist(e.touches);
-      scale = Math.max(1, Math.min(4, startScale * (dist / startDist)));
-      if (scale === 1) { translateX = 0; translateY = 0; }
-      clampTranslate();
-      applyTransform();
       e.preventDefault();
+      const newScale = Math.max(1, Math.min(4, startScale * getDist(e.touches) / startDist));
+
+      // Mantener el punto bajo los dedos fijo en el contenido
+      // Punto en espacio de contenido cuando empezó el gesto:
+      const contentX = (pinchOriginX - startTx) / startScale;
+      const contentY = (pinchOriginY - startTy) / startScale;
+      // Nuevo translate para que ese punto siga bajo los dedos:
+      tx = pinchOriginX - contentX * newScale;
+      ty = pinchOriginY - contentY * newScale;
+      scale = newScale;
+
+      if (scale === 1) { tx = 0; ty = 0; } else clamp();
+      apply();
     } else if (isPanning && e.touches.length === 1 && scale > 1) {
-      const dx = e.touches[0].clientX - lastTouchX;
-      const dy = e.touches[0].clientY - lastTouchY;
-      translateX = startX + dx;
-      translateY = startY + dy;
-      clampTranslate();
-      applyTransform();
       e.preventDefault();
+      tx = startTx + (e.touches[0].clientX - panStartX);
+      ty = startTy + (e.touches[0].clientY - panStartY);
+      clamp();
+      apply();
     }
   }, { passive: false });
 
   viewer.addEventListener('touchend', (e) => {
     if (e.touches.length < 2) isPinching = false;
-    if (e.touches.length === 0) isPanning = false;
+    if (e.touches.length === 0) {
+      isPanning = false;
+      // Si el scale quedó por debajo de 1 (no debería), resetear
+      if (scale < 1) { scale = 1; tx = 0; ty = 0; apply(); }
+    }
   });
 
-  // Doble tap para resetear zoom
+  // Doble tap: zoom 2.5x centrado en el tap, o resetear
   let lastTap = 0;
   viewer.addEventListener('touchend', (e) => {
     if (e.touches.length > 0) return;
     const now = Date.now();
     if (now - lastTap < 300) {
-      if (scale > 1) {
-        scale = 1; translateX = 0; translateY = 0;
-      } else {
-        scale = 2.5;
-        const rect = viewer.getBoundingClientRect();
-        translateX = -(e.changedTouches[0].clientX - rect.left) * (scale - 1);
-        translateY = -(e.changedTouches[0].clientY - rect.top) * (scale - 1);
-        clampTranslate();
-      }
-      applyTransform();
       e.preventDefault();
+      if (scale > 1) {
+        scale = 1; tx = 0; ty = 0;
+      } else {
+        const r    = viewer.getBoundingClientRect();
+        const tapX = e.changedTouches[0].clientX - r.left;
+        const tapY = e.changedTouches[0].clientY - r.top;
+        const ns   = 2.5;
+        // El punto bajo el dedo (en escala 1) debe quedar fijo
+        tx    = tapX - tapX * ns;
+        ty    = tapY - tapY * ns;
+        scale = ns;
+        clamp();
+      }
+      apply();
     }
     lastTap = now;
   });
