@@ -4,8 +4,8 @@ const negocios = [
     nombre: 'La Cafetera',
     categoria: 'Café',
     logo: 'assets/negocios/la-cafetera/Cafetera.jpeg',
-    menu: 'assets/negocios/la-cafetera/menu.pdf',
-    tipo: 'pdf',
+    menu: 'assets/negocios/la-cafetera/menu_page-0001.jpg',
+    tipo: 'imagen',
   },
   {
     id: 'dejamu',
