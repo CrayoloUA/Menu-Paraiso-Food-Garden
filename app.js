@@ -4,7 +4,7 @@ const negocios = [
     nombre: 'La Cafetera',
     categoria: 'Café',
     logo: 'assets/negocios/la-cafetera/Cafetera.jpeg',
-    menu: 'assets/negocios/la-cafetera/menu_page-0001.jpg',
+    menu: 'assets/negocios/la-cafetera/menu_page-0001 (1).jpg',
     tipo: 'imagen',
   },
   {
