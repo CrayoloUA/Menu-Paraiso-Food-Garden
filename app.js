@@ -255,24 +255,43 @@ function abrirModal(negocio) {
     return;
   }
 
-  // Imagen: mostrar en lightbox
-  const prevMedia = modalContent.querySelector('img, iframe, .pdf-viewer');
+  // Imagen: mostrar en lightbox con fullscreen móvil y pinch-to-zoom
+  const prevMedia = modalContent.querySelector('img, iframe, .pdf-viewer, .menu-html, .img-viewer');
   if (prevMedia) prevMedia.remove();
+
+  const isMobileImg = window.innerWidth <= 600;
+  if (isMobileImg) overlay.classList.add('modal-fullscreen');
+
+  const viewer = document.createElement('div');
+  viewer.className = 'img-viewer';
+
+  const wrapper = document.createElement('div');
+  wrapper.className = 'img-zoom-wrapper';
 
   const img = document.createElement('img');
   img.src = negocio.menu;
   img.alt = `Menú de ${negocio.nombre}`;
-  modalContent.appendChild(img);
+  img.draggable = false;
+
+  wrapper.appendChild(img);
+  viewer.appendChild(wrapper);
+  modalContent.appendChild(viewer);
 
   overlay.classList.add('activo');
   document.body.style.overflow = 'hidden';
+
+  if (isMobileImg) {
+    img.addEventListener('load', () => initPinchZoom(viewer, wrapper));
+    // Si ya está en caché, load no dispara
+    if (img.complete) initPinchZoom(viewer, wrapper);
+  }
 }
 
 function cerrarModal() {
   overlay.classList.remove('activo');
   overlay.classList.remove('modal-fullscreen');
   document.body.style.overflow = '';
-  const prevMedia = modalContent.querySelector('img, iframe, .pdf-viewer, .menu-html');
+  const prevMedia = modalContent.querySelector('img, iframe, .pdf-viewer, .menu-html, .img-viewer');
   if (prevMedia) prevMedia.remove();
 }
 
