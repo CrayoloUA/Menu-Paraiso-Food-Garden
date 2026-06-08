@@ -20,7 +20,7 @@ const negocios = [
     nombre: 'Satomi Bento',
     categoria: 'Japonés',
     logo: 'assets/negocios/satomi-bento/SATOMI-1.png',
-    menu: 'https://toteat.app/r/co/Satomi-Bento/7259/menu',
+    menu: 'https://menupp.co/satomibento',
     tipo: 'externo',
   },
   {
