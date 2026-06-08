@@ -380,7 +380,6 @@ function initPinchZoom(viewer, wrapper) {
       if (scale < 1) { scale = 1; tx = 0; ty = 0; apply(); }
 
       const now = Date.now();
-      const deltaY = e.changedTouches[0].clientY - swipeStartY;
 
       // Doble tap → zoom 2.5x o resetear
       if (now - lastTap < 300) {
@@ -403,10 +402,7 @@ function initPinchZoom(viewer, wrapper) {
       }
       lastTap = now;
 
-      // Swipe hacia abajo para cerrar (solo sin zoom)
-      if (scale === 1 && deltaY > 80) {
-        cerrarModal();
-      }
+      // El menú solo se cierra con el botón X
     }
   });
 }
