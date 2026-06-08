@@ -30,7 +30,7 @@
   font-family: 'Montserrat', sans-serif;
   font-size: 0.68rem;
   font-weight: 600;
-  letter-spacing: 0.3em;
+  letter-spacing: 0.32em;
   text-transform: uppercase;
   color: rgba(245,240,232,0.45);
   opacity: 0;
@@ -52,7 +52,7 @@
   font-family: 'Montserrat', sans-serif;
   font-size: 0.62rem;
   font-weight: 400;
-  letter-spacing: 0.18em;
+  letter-spacing: 0.2em;
   color: rgba(245,240,232,0.3);
   opacity: 0;
   animation: splashEntrada 0.4s ease-out 0.85s forwards;
@@ -79,8 +79,8 @@
   --color-text-inv: #f5f0e8;
   --font-title:     'Pinyon Script', cursive;
   --font-body:      'Montserrat', sans-serif;
-  --radius-card:    12px;
-  --shadow-card:    0 4px 16px rgba(0,0,0,0.25);
+  --radius-card:    14px;
+  --shadow-card:    0 4px 18px rgba(0,0,0,0.28);
 }
 
 /* ─── Reset ──────────────────────────────────────────────── */
@@ -118,7 +118,9 @@ img {
     radial-gradient(ellipse at 50% 100%, rgba(26,46,26,0.8) 0%, transparent 60%);
   padding: 2.5rem 1rem 2.25rem;
   text-align: center;
-  border-bottom: 1px solid rgba(201,168,76,0.5);
+  /* [delight] línea dorada más luminosa */
+  border-bottom: 1px solid rgba(201,168,76,0.6);
+  box-shadow: 0 1px 0 rgba(201,168,76,0.08), 0 4px 24px rgba(0,0,0,0.4);
   overflow: hidden;
 }
 
@@ -126,58 +128,86 @@ img {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 0.75rem;
+  gap: 0.85rem;
 }
 
 .header-logo {
   width: 110px;
   height: 110px;
   object-fit: contain;
-  filter: drop-shadow(0 2px 8px rgba(201,168,76,0.4));
+  /* [delight] sombra más cálida */
+  filter: drop-shadow(0 2px 12px rgba(201,168,76,0.5));
+  transition: filter 0.3s ease;
 }
 
+.header-logo:hover {
+  filter: drop-shadow(0 4px 20px rgba(201,168,76,0.7));
+}
+
+/* [typeset] jerarquía clara: título grande, subtítulo pequeño con buen tracking */
 .header-title {
   font-family: var(--font-title);
   font-size: 3rem;
   font-weight: 400;
   color: var(--color-gold);
   line-height: 1.1;
-  text-shadow: 0 2px 12px rgba(0,0,0,0.5);
+  text-shadow: 0 2px 16px rgba(0,0,0,0.5);
 }
 
 .header-subtitle {
   font-family: var(--font-body);
-  font-size: 0.8rem;
+  font-size: 0.75rem;
   font-weight: 400;
-  letter-spacing: 0.08em;
+  /* [typeset] más tracking para escala pequeña */
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
   color: var(--color-gold);
-  opacity: 0.7;
-  font-style: italic;
+  opacity: 0.6;
 }
 
 /* ─── Barra de filtros ───────────────────────────────────── */
+/* [layout + adapt] scroll horizontal en móvil — mucho mejor con 9+ categorías */
 .filtros-bar {
   display: flex;
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
   gap: 0.5rem;
-  padding: 1.25rem 1rem 0.25rem;
+  padding: 1.25rem 1rem 0.75rem;
   max-width: 900px;
   margin: 0 auto;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+}
+
+.filtros-bar::-webkit-scrollbar {
+  display: none;
+}
+
+/* [adapt] indicador visual sutil de que hay más a la derecha */
+.filtros-bar::after {
+  content: '';
+  flex-shrink: 0;
+  width: 1rem;
 }
 
 .filtro-btn {
   font-family: var(--font-body);
+  /* [typeset] un poco más legible */
   font-size: 0.72rem;
   font-weight: 600;
-  letter-spacing: 0.06em;
+  letter-spacing: 0.07em;
   text-transform: uppercase;
   color: rgba(245,240,232,0.55);
   background: transparent;
   border: 1px solid rgba(245,240,232,0.18);
   border-radius: 20px;
-  padding: 0.35rem 0.85rem;
+  /* [adapt] touch targets mínimo 44px de alto */
+  padding: 0.5rem 1rem;
+  min-height: 40px;
+  white-space: nowrap;
+  flex-shrink: 0;
   cursor: pointer;
-  transition: color 0.18s ease, border-color 0.18s ease, background 0.18s ease;
+  transition: color 0.18s ease, border-color 0.18s ease, background 0.18s ease, box-shadow 0.18s ease;
   -webkit-tap-highlight-color: transparent;
 }
 
@@ -190,14 +220,17 @@ img {
   color: var(--color-bg);
   background-color: var(--color-gold);
   border-color: var(--color-gold);
+  /* [delight] brillo sutil en el activo */
+  box-shadow: 0 2px 10px rgba(201,168,76,0.35);
 }
 
 /* ─── Grilla de negocios ─────────────────────────────────── */
 .negocios-grid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
-  gap: 1rem;
-  padding: 1.5rem 1rem;
+  /* [layout] más espacio y ritmo */
+  gap: 1.25rem;
+  padding: 2rem 1rem 2.5rem;
   max-width: 900px;
   margin: 0 auto;
 }
@@ -211,6 +244,7 @@ img {
 @media (min-width: 900px) {
   .negocios-grid {
     grid-template-columns: repeat(4, 1fr);
+    gap: 1.5rem;
   }
 }
 
@@ -218,7 +252,7 @@ img {
 @keyframes cardEntrada {
   from {
     opacity: 0;
-    transform: translateY(18px);
+    transform: translateY(20px);
   }
   to {
     opacity: 1;
@@ -234,19 +268,23 @@ img {
   border: 1.5px solid transparent;
   overflow: hidden;
   cursor: pointer;
-  transition: transform 0.2s cubic-bezier(0.22,1,0.36,1),
+  transition: transform 0.25s cubic-bezier(0.22,1,0.36,1),
               border-color 0.2s ease,
-              box-shadow 0.2s ease;
+              box-shadow 0.25s cubic-bezier(0.22,1,0.36,1);
   -webkit-tap-highlight-color: transparent;
   animation: cardEntrada 0.45s cubic-bezier(0.22,1,0.36,1) both;
   animation-delay: calc(var(--i, 0) * 0.06s);
 }
 
+/* [delight] hover con doble capa de glow — más rico */
 .negocio-card:hover,
 .negocio-card:focus-visible {
-  transform: translateY(-5px) scale(1.01);
+  transform: translateY(-6px) scale(1.01);
   border-color: var(--color-gold);
-  box-shadow: 0 10px 28px rgba(201,168,76,0.3);
+  box-shadow:
+    0 12px 32px rgba(201,168,76,0.3),
+    0 2px 8px rgba(0,0,0,0.2),
+    0 0 0 1px rgba(201,168,76,0.12);
   outline: none;
 }
 
@@ -256,18 +294,18 @@ img {
   width: 100%;
   aspect-ratio: 1 / 1;
   overflow: hidden;
-  background-color: #1e2e1e;
+  background-color: #1a2a1a;
 }
 
 .card-img-wrap img {
   width: 100%;
   height: 100%;
   object-fit: cover;
-  transition: transform 0.35s cubic-bezier(0.22,1,0.36,1);
+  transition: transform 0.4s cubic-bezier(0.22,1,0.36,1);
 }
 
 .negocio-card:hover .card-img-wrap img {
-  transform: scale(1.07);
+  transform: scale(1.08);
 }
 
 /* ─── Badge de categoría ─────────────────────────────────── */
@@ -275,54 +313,60 @@ img {
   position: absolute;
   top: 0.5rem;
   left: 0.5rem;
-  background-color: rgba(10, 20, 10, 0.78);
+  background-color: rgba(8, 16, 8, 0.82);
   color: var(--color-gold);
   font-family: var(--font-body);
-  font-size: 0.62rem;
-  font-weight: 600;
-  letter-spacing: 0.04em;
-  padding: 0.2rem 0.5rem;
+  /* [typeset] legible pero sin protagonismo */
+  font-size: 0.6rem;
+  font-weight: 700;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  padding: 0.22rem 0.55rem;
   border-radius: 20px;
-  border: 1px solid rgba(201,168,76,0.35);
-  backdrop-filter: blur(4px);
-  -webkit-backdrop-filter: blur(4px);
+  border: 1px solid rgba(201,168,76,0.38);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
   white-space: nowrap;
   z-index: 2;
 }
 
 /* ─── Info inferior de la tarjeta ────────────────────────── */
 .card-info {
-  padding: 0.55rem 0.6rem 0.6rem;
+  /* [layout] más aire */
+  padding: 0.65rem 0.7rem 0.7rem;
   display: flex;
   align-items: baseline;
   justify-content: space-between;
-  gap: 0.25rem;
+  gap: 0.3rem;
 }
 
+/* [typeset] nombre más legible en móvil */
 .card-nombre {
   font-family: var(--font-body);
-  font-size: 0.78rem;
+  font-size: 0.88rem;
   font-weight: 600;
   color: var(--color-text);
   letter-spacing: 0.01em;
-  line-height: 1.2;
+  line-height: 1.25;
   flex: 1;
 }
 
+/* [typeset] hint más discreto pero visible */
 .card-hint {
   font-family: var(--font-body);
-  font-size: 0.62rem;
+  font-size: 0.65rem;
   font-weight: 600;
   color: var(--color-gold-dim);
   letter-spacing: 0.02em;
   white-space: nowrap;
-  transition: color 0.15s ease, transform 0.15s ease;
+  transition: color 0.15s ease, transform 0.2s cubic-bezier(0.22,1,0.36,1);
   display: inline-block;
 }
 
+/* [delight] flecha se mueve más al hacer hover */
 .negocio-card:hover .card-hint {
   color: var(--color-gold);
-  transform: translateX(2px);
+  transform: translateX(3px);
 }
 
 /* ─── Tarjeta destacada ──────────────────────────────────── */
@@ -347,22 +391,39 @@ img {
     display: flex;
     flex-direction: column;
     justify-content: flex-end;
-    padding: 1.25rem 1rem;
+    padding: 1.4rem 1.1rem;
     gap: 0.4rem;
   }
 
   .negocio-card.destacada .card-categoria {
-    font-size: 0.68rem;
-    padding: 0.22rem 0.6rem;
+    font-size: 0.65rem;
+    padding: 0.25rem 0.65rem;
   }
 
   .negocio-card.destacada .card-nombre {
-    font-size: 1rem;
+    font-size: 1.05rem;
     line-height: 1.3;
   }
 
   .negocio-card.destacada .card-hint {
-    font-size: 0.68rem;
+    font-size: 0.7rem;
+  }
+}
+
+/* ─── Adapt: pantallas muy pequeñas ─────────────────────── */
+@media (max-width: 380px) {
+  .header-title {
+    font-size: 2.4rem;
+  }
+
+  .header-logo {
+    width: 88px;
+    height: 88px;
+  }
+
+  .negocios-grid {
+    gap: 0.85rem;
+    padding: 1.5rem 0.75rem 2rem;
   }
 }
 
@@ -382,12 +443,24 @@ img {
   display: flex;
 }
 
+.modal-overlay.modal-fullscreen {
+  padding: 0;
+  background-color: #000;
+}
+
 .modal-content {
   position: relative;
   max-width: 100%;
   max-height: 90vh;
   overflow: auto;
   -webkit-overflow-scrolling: touch;
+}
+
+.modal-fullscreen .modal-content {
+  max-width: 100%;
+  max-height: 100vh;
+  width: 100%;
+  height: 100%;
 }
 
 .modal-content img {
@@ -412,7 +485,7 @@ img {
   width: 2.5rem;
   height: 2.5rem;
   background-color: rgba(0,0,0,0.7);
-  color: #fff;
+  color: #f5f0e8;
   border: 1.5px solid rgba(201,168,76,0.6);
   border-radius: 50%;
   font-size: 1.1rem;
@@ -421,20 +494,173 @@ img {
   align-items: center;
   justify-content: center;
   z-index: 1010;
-  transition: background-color 0.15s;
+  transition: background-color 0.15s ease, box-shadow 0.15s ease;
 }
 
 .modal-close:hover {
-  background-color: rgba(201,168,76,0.3);
+  background-color: rgba(201,168,76,0.25);
+  box-shadow: 0 0 12px rgba(201,168,76,0.3);
+}
+
+/* ─── Visor PDF inline ───────────────────────────────────── */
+.pdf-viewer {
+  width: 92vw;
+  max-width: 680px;
+  max-height: 88vh;
+  overflow-x: hidden;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  background: #fff;
+  border-radius: 8px;
+}
+
+.modal-fullscreen .pdf-viewer {
+  width: 100vw;
+  max-width: 100vw;
+  max-height: 100vh;
+  height: 100vh;
+  border-radius: 0;
+  overflow: auto;
+  touch-action: none;
+}
+
+.pdf-zoom-wrapper {
+  transform-origin: 0 0;
+  will-change: transform;
+  min-width: 100%;
+}
+
+.pdf-viewer canvas {
+  display: block;
+  width: 100% !important;
+  height: auto !important;
+  margin-bottom: 2px;
+}
+
+.pdf-spinner {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 4rem 2rem;
+  color: var(--color-gold);
+  font-family: var(--font-body);
+  font-size: 0.85rem;
+  letter-spacing: 0.05em;
+  min-width: 60vw;
+}
+
+.pdf-error {
+  padding: 3rem 2rem;
+  text-align: center;
+  color: #666;
+  font-family: var(--font-body);
+  font-size: 0.85rem;
+  line-height: 1.6;
+}
+
+/* ─── Menú HTML renderizado ──────────────────────────────── */
+.menu-html {
+  width: 92vw;
+  max-width: 480px;
+  max-height: 88vh;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  background: var(--color-card-bg);
+  border-radius: 12px;
+  padding: 1.5rem 1.25rem 2rem;
+}
+
+.menu-titulo {
+  font-family: var(--font-title);
+  font-size: 2rem;
+  color: var(--color-gold-dim);
+  text-align: center;
+  margin-bottom: 1.25rem;
+  line-height: 1.2;
+}
+
+.menu-seccion {
+  margin-bottom: 1.25rem;
+}
+
+.menu-seccion-titulo {
+  font-family: var(--font-body);
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--color-gold-dim);
+  border-bottom: 1px solid rgba(201,168,76,0.3);
+  padding-bottom: 0.35rem;
+  margin-bottom: 0.6rem;
+}
+
+.menu-seccion-nota {
+  font-size: 0.72rem;
+  color: #888;
+  margin-bottom: 0.5rem;
+  font-style: italic;
+}
+
+.menu-items {
+  list-style: none;
+}
+
+.menu-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 0.75rem;
+  padding: 0.4rem 0;
+  border-bottom: 1px dotted rgba(0,0,0,0.08);
+}
+
+.menu-item:last-child {
+  border-bottom: none;
+}
+
+.menu-item-info {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-width: 0;
+}
+
+.menu-item-nombre {
+  font-family: var(--font-body);
+  font-size: 0.88rem;
+  font-weight: 500;
+  color: var(--color-text);
+}
+
+.menu-item-desc {
+  font-size: 0.72rem;
+  color: #888;
+  line-height: 1.3;
+}
+
+.menu-item-precio {
+  font-family: var(--font-body);
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--color-text);
+  white-space: nowrap;
+}
+
+.menu-vacio {
+  text-align: center;
+  padding: 2rem 1rem;
+  color: #888;
+  font-size: 0.85rem;
 }
 
 /* ─── Footer ─────────────────────────────────────────────── */
 .site-footer {
   text-align: center;
-  padding: 1.5rem 1rem;
-  border-top: 1px solid rgba(201,168,76,0.3);
-  font-size: 0.75rem;
-  letter-spacing: 0.1em;
-  color: rgba(245,240,232,0.5);
+  padding: 1.75rem 1rem;
+  border-top: 1px solid rgba(201,168,76,0.25);
+  font-size: 0.7rem;
+  letter-spacing: 0.14em;
+  color: rgba(245,240,232,0.4);
   text-transform: uppercase;
 }

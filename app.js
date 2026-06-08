@@ -4,8 +4,8 @@ const negocios = [
     nombre: 'La Cafetera',
     categoria: 'Café',
     logo: 'assets/negocios/la-cafetera/Cafetera.jpeg',
-    menu: 'assets/negocios/la-cafetera/menu.jpg',
-    tipo: 'imagen',
+    menu: 'assets/negocios/la-cafetera/menu.pdf',
+    tipo: 'pdf',
   },
   {
     id: 'dejamu',
@@ -55,6 +55,30 @@ const negocios = [
     logo: 'assets/negocios/cali-coffee-tour/images.jpg',
     menu: 'https://menupp.co/coffeemaster/venue/nu9KOuY1SXmbrxiFVKKL/menu/6f3a7cb9-74f9-4792-af2e-68527d230006',
     tipo: 'externo',
+  },
+  {
+    id: 'sabor-peruano',
+    nombre: 'Sabor Peruano',
+    categoria: 'Peruano',
+    logo: 'assets/negocios/sabor-peruano/logo.jpg',
+    menu: 'assets/negocios/sabor-peruano/menu.jpg',
+    tipo: 'imagen',
+  },
+  {
+    id: 'uepa-ve',
+    nombre: "Mirá! Uepa'Ve",
+    categoria: 'Wraps & Arepas',
+    logo: 'assets/negocios/uepa-ve/Mira ve.png',
+    menu: 'assets/negocios/uepa-ve/menu.jpg',
+    tipo: 'imagen',
+  },
+  {
+    id: 'monster-park',
+    nombre: 'Monster Park',
+    categoria: 'Entretenimiento',
+    logo: 'assets/negocios/monster-park/logo.jpeg',
+    menu: 'assets/negocios/monster-park/menu.jpg',
+    tipo: 'imagen',
   },
   // Para agregar un negocio nuevo, copiar este bloque y completar:
   // {
@@ -132,26 +156,113 @@ const overlay = document.getElementById('modal-overlay');
 const modalContent = document.getElementById('modal-content');
 const btnCerrar = document.getElementById('modal-close');
 
+function formatearPrecio(precio) {
+  if (precio == null) return 'Consultar';
+  return '$' + precio.toLocaleString('es-CO');
+}
+
+function renderMenuHTML(negocio) {
+  const data = typeof menus !== 'undefined' && menus[negocio.id];
+  if (!data) return '<p class="menu-vacio">Menú próximamente</p>';
+
+  return data.secciones.map(sec => `
+    <div class="menu-seccion">
+      <h3 class="menu-seccion-titulo">${sec.titulo}</h3>
+      ${sec.nota ? `<p class="menu-seccion-nota">${sec.nota}</p>` : ''}
+      <ul class="menu-items">
+        ${sec.items.map(item => `
+          <li class="menu-item">
+            <span class="menu-item-info">
+              <span class="menu-item-nombre">${item.nombre}</span>
+              ${item.desc ? `<span class="menu-item-desc">${item.desc}</span>` : ''}
+            </span>
+            <span class="menu-item-precio">${formatearPrecio(item.precio)}</span>
+          </li>
+        `).join('')}
+      </ul>
+    </div>
+  `).join('');
+}
+
 function abrirModal(negocio) {
   if (negocio.tipo === 'externo') {
     window.open(negocio.menu, '_blank', 'noopener,noreferrer');
     return;
   }
 
-  const prevMedia = modalContent.querySelector('img, iframe');
+  if (negocio.tipo === 'html') {
+    const prevMedia = modalContent.querySelector('img, iframe, .pdf-viewer, .menu-html');
+    if (prevMedia) prevMedia.remove();
+
+    const wrapper = document.createElement('div');
+    wrapper.className = 'menu-html';
+    wrapper.innerHTML = `
+      <h2 class="menu-titulo">${negocio.nombre}</h2>
+      ${renderMenuHTML(negocio)}
+    `;
+    modalContent.appendChild(wrapper);
+    overlay.classList.add('activo');
+    document.body.style.overflow = 'hidden';
+    return;
+  }
+
+  // PDFs: renderizar inline con PDF.js — sin salir de la app
+  if (negocio.tipo === 'pdf') {
+    const prevMedia = modalContent.querySelector('img, iframe, .pdf-viewer, .menu-html');
+    if (prevMedia) prevMedia.remove();
+
+    const isMobile = window.innerWidth <= 600;
+    if (isMobile) overlay.classList.add('modal-fullscreen');
+
+    const viewer = document.createElement('div');
+    viewer.className = 'pdf-viewer';
+    viewer.innerHTML = `<div class="pdf-spinner">Cargando menú…</div>`;
+    modalContent.appendChild(viewer);
+    overlay.classList.add('activo');
+    document.body.style.overflow = 'hidden';
+
+    const pdfUrl = new URL(negocio.menu, window.location.href).href;
+
+    import('./assets/pdfjs/build/pdf.mjs').then(pdfjsLib => {
+      pdfjsLib.GlobalWorkerOptions.workerSrc = './assets/pdfjs/build/pdf.worker.mjs';
+      return pdfjsLib.getDocument(pdfUrl).promise;
+    }).then(async pdf => {
+      viewer.innerHTML = '';
+      const wrapper = document.createElement('div');
+      wrapper.className = 'pdf-zoom-wrapper';
+      viewer.appendChild(wrapper);
+
+      const renderWidth = isMobile ? window.innerWidth : viewer.clientWidth;
+      for (let n = 1; n <= pdf.numPages; n++) {
+        const page = await pdf.getPage(n);
+        const baseVp = page.getViewport({ scale: 1 });
+        const scale = (renderWidth / baseVp.width) * (isMobile ? 1.15 : 1);
+        const vp = page.getViewport({ scale });
+        const canvas = document.createElement('canvas');
+        canvas.width = vp.width;
+        canvas.height = vp.height;
+        wrapper.appendChild(canvas);
+        await page.render({ canvasContext: canvas.getContext('2d'), viewport: vp }).promise;
+      }
+
+      if (isMobile) initPinchZoom(viewer, wrapper);
+    }).catch(() => {
+      // Fallback: si file:// o error de red, abrir el PDF directo
+      cerrarModal();
+      window.open(negocio.menu, '_blank');
+    });
+
+    return;
+  }
+
+  // Imagen: mostrar en lightbox
+  const prevMedia = modalContent.querySelector('img, iframe, .pdf-viewer');
   if (prevMedia) prevMedia.remove();
 
-  if (negocio.tipo === 'pdf') {
-    const iframe = document.createElement('iframe');
-    iframe.src = negocio.menu;
-    iframe.title = `Menú de ${negocio.nombre}`;
-    modalContent.appendChild(iframe);
-  } else {
-    const img = document.createElement('img');
-    img.src = negocio.menu;
-    img.alt = `Menú de ${negocio.nombre}`;
-    modalContent.appendChild(img);
-  }
+  const img = document.createElement('img');
+  img.src = negocio.menu;
+  img.alt = `Menú de ${negocio.nombre}`;
+  modalContent.appendChild(img);
 
   overlay.classList.add('activo');
   document.body.style.overflow = 'hidden';
@@ -159,9 +270,106 @@ function abrirModal(negocio) {
 
 function cerrarModal() {
   overlay.classList.remove('activo');
+  overlay.classList.remove('modal-fullscreen');
   document.body.style.overflow = '';
-  const prevMedia = modalContent.querySelector('img, iframe');
+  const prevMedia = modalContent.querySelector('img, iframe, .pdf-viewer, .menu-html');
   if (prevMedia) prevMedia.remove();
+}
+
+/* ── Pinch-to-zoom para el visor PDF ─────────────────────── */
+function initPinchZoom(viewer, wrapper) {
+  let scale = 1;
+  let startScale = 1;
+  let startDist = 0;
+  let translateX = 0, translateY = 0;
+  let startX = 0, startY = 0;
+  let lastTouchX = 0, lastTouchY = 0;
+  let isPinching = false;
+  let isPanning = false;
+
+  function clampTranslate() {
+    const rect = wrapper.getBoundingClientRect();
+    const vw = viewer.clientWidth;
+    const vh = viewer.clientHeight;
+    const maxX = 0;
+    const minX = Math.min(0, vw - rect.width);
+    const maxY = 0;
+    const minY = Math.min(0, vh - rect.height);
+    translateX = Math.max(minX, Math.min(maxX, translateX));
+    translateY = Math.max(minY, Math.min(maxY, translateY));
+  }
+
+  function applyTransform() {
+    wrapper.style.transform = `translate(${translateX}px, ${translateY}px) scale(${scale})`;
+  }
+
+  function getDist(touches) {
+    const dx = touches[0].clientX - touches[1].clientX;
+    const dy = touches[0].clientY - touches[1].clientY;
+    return Math.sqrt(dx * dx + dy * dy);
+  }
+
+  viewer.addEventListener('touchstart', (e) => {
+    if (e.touches.length === 2) {
+      isPinching = true;
+      isPanning = false;
+      startDist = getDist(e.touches);
+      startScale = scale;
+      e.preventDefault();
+    } else if (e.touches.length === 1 && scale > 1) {
+      isPanning = true;
+      startX = translateX;
+      startY = translateY;
+      lastTouchX = e.touches[0].clientX;
+      lastTouchY = e.touches[0].clientY;
+      e.preventDefault();
+    }
+  }, { passive: false });
+
+  viewer.addEventListener('touchmove', (e) => {
+    if (isPinching && e.touches.length === 2) {
+      const dist = getDist(e.touches);
+      scale = Math.max(1, Math.min(4, startScale * (dist / startDist)));
+      if (scale === 1) { translateX = 0; translateY = 0; }
+      clampTranslate();
+      applyTransform();
+      e.preventDefault();
+    } else if (isPanning && e.touches.length === 1 && scale > 1) {
+      const dx = e.touches[0].clientX - lastTouchX;
+      const dy = e.touches[0].clientY - lastTouchY;
+      translateX = startX + dx;
+      translateY = startY + dy;
+      clampTranslate();
+      applyTransform();
+      e.preventDefault();
+    }
+  }, { passive: false });
+
+  viewer.addEventListener('touchend', (e) => {
+    if (e.touches.length < 2) isPinching = false;
+    if (e.touches.length === 0) isPanning = false;
+  });
+
+  // Doble tap para resetear zoom
+  let lastTap = 0;
+  viewer.addEventListener('touchend', (e) => {
+    if (e.touches.length > 0) return;
+    const now = Date.now();
+    if (now - lastTap < 300) {
+      if (scale > 1) {
+        scale = 1; translateX = 0; translateY = 0;
+      } else {
+        scale = 2.5;
+        const rect = viewer.getBoundingClientRect();
+        translateX = -(e.changedTouches[0].clientX - rect.left) * (scale - 1);
+        translateY = -(e.changedTouches[0].clientY - rect.top) * (scale - 1);
+        clampTranslate();
+      }
+      applyTransform();
+      e.preventDefault();
+    }
+    lastTap = now;
+  });
 }
 
 document.getElementById('negocios-grid').addEventListener('click', (e) => {
