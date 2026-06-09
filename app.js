@@ -69,7 +69,11 @@ const negocios = [
     nombre: "Mirá! Uepa'Ve",
     categoria: 'Wraps & Arepas',
     logo: 'assets/negocios/uepa-ve/Mira ve.png',
-    menu: 'assets/negocios/uepa-ve/menu.jpg',
+    menu: [
+      'assets/negocios/uepa-ve/Menu Mira Uepa Ve_page-0001.jpg',
+      'assets/negocios/uepa-ve/Menu Mira Uepa Ve_page-0002.jpg',
+      'assets/negocios/uepa-ve/Menu Mira Uepa Ve_page-0003.jpg',
+    ],
     tipo: 'imagen',
   },
   {
@@ -268,23 +272,23 @@ function abrirModal(negocio) {
   const wrapper = document.createElement('div');
   wrapper.className = 'img-zoom-wrapper';
 
-  const img = document.createElement('img');
-  img.src = negocio.menu;
-  img.alt = `Menú de ${negocio.nombre}`;
-  img.draggable = false;
+  // Soporta una imagen sola o un array de páginas
+  const pages = Array.isArray(negocio.menu) ? negocio.menu : [negocio.menu];
+  pages.forEach(src => {
+    const img = document.createElement('img');
+    img.src = src;
+    img.alt = `Menú de ${negocio.nombre}`;
+    img.draggable = false;
+    wrapper.appendChild(img);
+  });
 
-  wrapper.appendChild(img);
   viewer.appendChild(wrapper);
   modalContent.appendChild(viewer);
 
   overlay.classList.add('activo');
   document.body.style.overflow = 'hidden';
 
-  if (isMobileImg) {
-    img.addEventListener('load', () => initPinchZoom(viewer, wrapper));
-    // Si ya está en caché, load no dispara
-    if (img.complete) initPinchZoom(viewer, wrapper);
-  }
+  if (isMobileImg) initPinchZoom(viewer, wrapper);
 }
 
 function cerrarModal() {
@@ -311,13 +315,22 @@ function initPinchZoom(viewer, wrapper) {
     return Math.hypot(t[0].clientX - t[1].clientX, t[0].clientY - t[1].clientY);
   }
   function clamp() {
-    const minX = Math.min(0, viewer.clientWidth  * (1 - scale));
-    const minY = Math.min(0, viewer.clientHeight * (1 - scale));
+    // Usa el tamaño real del wrapper (puede ser más alto que el viewer en menus multipágina)
+    const scaledW = wrapper.offsetWidth  * scale;
+    const scaledH = wrapper.offsetHeight * scale;
+    const minX = Math.min(0, viewer.clientWidth  - scaledW);
+    const minY = Math.min(0, viewer.clientHeight - scaledH);
     tx = Math.max(minX, Math.min(0, tx));
     ty = Math.max(minY, Math.min(0, ty));
   }
   function apply() {
     wrapper.style.transform = `translate(${tx}px,${ty}px) scale(${scale})`;
+    // Cuando no hay zoom: scroll nativo. Cuando hay zoom: panning manual.
+    if (scale <= 1) {
+      viewer.style.overflowY = 'auto';
+    } else {
+      viewer.style.overflowY = 'hidden';
+    }
   }
 
   // ── touchstart ──────────────────────────────────────────

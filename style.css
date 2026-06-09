@@ -490,7 +490,8 @@ img {
   height: 100vh;
   max-height: 100vh;
   border-radius: 0;
-  touch-action: none;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
 }
 
 .img-zoom-wrapper {
