@@ -33,11 +33,11 @@ const negocios = [
   },
   {
     id: 'el-obelisco',
-    nombre: 'El Obelisco',
+    nombre: 'Obelisco',
     categoria: 'Caleño',
     logo: 'assets/negocios/el-obelisco/Elobelisco.jpg',
-    menu: 'assets/negocios/el-obelisco/menu.jpg',
-    tipo: 'imagen',
+    menu: 'https://menupp.co/obeliscodeli/venue/15b835df-6bdd-490f-93a3-82ab0387ee16/menu/43286df3-bfc0-48a9-832d-8db80a8e8621',
+    tipo: 'externo',
   },
   {
     id: 'el-bochinche',
