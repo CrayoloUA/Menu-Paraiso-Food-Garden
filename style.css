@@ -492,6 +492,10 @@ img {
   border-radius: 0;
   overflow-y: auto;
   -webkit-overflow-scrolling: touch;
+  /* display block (no flex-center): el contenido empieza arriba y baja con scroll.
+     Con flex-center el navegador corta la parte superior y no se puede alcanzar. */
+  display: block;
+  overflow-anchor: none;
 }
 
 .img-zoom-wrapper {

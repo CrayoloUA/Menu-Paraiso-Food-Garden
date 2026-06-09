@@ -279,6 +279,8 @@ function abrirModal(negocio) {
     img.src = src;
     img.alt = `Menú de ${negocio.nombre}`;
     img.draggable = false;
+    // Mantener el scroll arriba mientras cargan las páginas (orden 1→2→3)
+    img.addEventListener('load', () => { viewer.scrollTop = 0; });
     wrapper.appendChild(img);
   });
 
@@ -287,6 +289,7 @@ function abrirModal(negocio) {
 
   overlay.classList.add('activo');
   document.body.style.overflow = 'hidden';
+  viewer.scrollTop = 0;
 
   if (isMobileImg) initPinchZoom(viewer, wrapper);
 }
