@@ -308,6 +308,15 @@ img {
   transform: scale(1.08);
 }
 
+/* ─── Logos con fondo claro (object-fit: contain) ───────── */
+[data-id="bandeja-coreana"] .card-img-wrap {
+  background-color: #f0f0f0;
+}
+[data-id="bandeja-coreana"] .card-img-wrap img {
+  object-fit: contain;
+  padding: 8px;
+}
+
 /* ─── Badge de categoría ─────────────────────────────────── */
 .card-categoria {
   position: absolute;
