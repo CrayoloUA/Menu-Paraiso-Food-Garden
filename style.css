@@ -313,8 +313,7 @@ img {
   background-color: #ffffff;
 }
 [data-id="bandeja-coreana"] .card-img-wrap img {
-  object-fit: cover;
-  object-position: 12% center;
+  object-fit: contain;
 }
 
 /* ─── Badge de categoría ─────────────────────────────────── */
