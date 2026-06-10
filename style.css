@@ -310,11 +310,11 @@ img {
 
 /* ─── Logos con fondo claro (object-fit: contain) ───────── */
 [data-id="bandeja-coreana"] .card-img-wrap {
-  background-color: #f0f0f0;
+  background-color: #ffffff;
 }
 [data-id="bandeja-coreana"] .card-img-wrap img {
-  object-fit: contain;
-  padding: 8px;
+  object-fit: cover;
+  object-position: 12% center;
 }
 
 /* ─── Badge de categoría ─────────────────────────────────── */
