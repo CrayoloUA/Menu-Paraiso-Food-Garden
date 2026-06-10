@@ -77,6 +77,18 @@ const negocios = [
     tipo: 'imagen',
   },
   {
+    id: 'bandeja-coreana',
+    nombre: 'Bandeja Coreana',
+    categoria: 'Coreano',
+    logo: 'assets/negocios/bandeja-coreana/logo.jpg',
+    menu: [
+      'assets/negocios/bandeja-coreana/menu_page-0001.jpg',
+      'assets/negocios/bandeja-coreana/menu_page-0002.jpg',
+      'assets/negocios/bandeja-coreana/menu_page-0003.jpg',
+    ],
+    tipo: 'imagen',
+  },
+  {
     id: 'monster-park',
     nombre: 'Monster Park',
     categoria: 'Entretenimiento',
