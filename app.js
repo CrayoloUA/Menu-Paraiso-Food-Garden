@@ -44,8 +44,11 @@ const negocios = [
     nombre: 'El Bochinche',
     categoria: 'Colombiano',
     logo: 'assets/negocios/el-bochinche/images.jpg',
-    menu: 'assets/negocios/el-bochinche/menu.pdf',
-    tipo: 'pdf',
+    menu: [
+      'assets/negocios/el-bochinche/Menu Unicentro Horizontal_compressed_page-0001.jpg',
+      'assets/negocios/el-bochinche/Menu Unicentro Horizontal_compressed_page-0002.jpg',
+    ],
+    tipo: 'imagen',
   },
   {
     id: 'cali-coffee-tour',
