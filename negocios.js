@@ -10,7 +10,7 @@ const negocios = [
   {
     id: 'dejamu',
     nombre: 'Dejamu',
-    categoria: 'Fusión',
+    categoria: 'Helados & Postres',
     logo: 'assets/negocios/dejamu/image_495.png',
     menu: 'assets/negocios/dejamu/menu-01.jpg',
     tipo: 'imagen',
@@ -18,7 +18,7 @@ const negocios = [
   {
     id: 'satomi-bento',
     nombre: 'Satomi Bento',
-    categoria: 'Japonés',
+    categoria: 'Comidas',
     logo: 'assets/negocios/satomi-bento/SATOMI-1.png',
     menu: 'https://menupp.co/satomibento',
     tipo: 'externo',
@@ -34,7 +34,7 @@ const negocios = [
   {
     id: 'el-obelisco',
     nombre: 'Obelisco',
-    categoria: 'Caleño',
+    categoria: 'Comidas',
     logo: 'assets/negocios/el-obelisco/Elobelisco.jpg',
     menu: 'https://menupp.co/obeliscodeli/venue/15b835df-6bdd-490f-93a3-82ab0387ee16/menu/43286df3-bfc0-48a9-832d-8db80a8e8621',
     tipo: 'externo',
@@ -42,7 +42,7 @@ const negocios = [
   {
     id: 'el-bochinche',
     nombre: 'El Bochinche',
-    categoria: 'Colombiano',
+    categoria: 'Comidas',
     logo: 'assets/negocios/el-bochinche/images.jpg',
     menu: [
       'assets/negocios/el-bochinche/menu-01.jpg',
@@ -62,7 +62,7 @@ const negocios = [
   {
     id: 'sabor-peruano',
     nombre: 'Sabor Peruano',
-    categoria: 'Peruano',
+    categoria: 'Comidas',
     logo: 'assets/negocios/sabor-peruano/logo.jpg',
     menu: 'assets/negocios/sabor-peruano/menu-01.jpg',
     tipo: 'imagen',
@@ -70,7 +70,7 @@ const negocios = [
   {
     id: 'uepa-ve',
     nombre: "Mirá! Uepa'Ve",
-    categoria: 'Wraps & Arepas',
+    categoria: 'Comidas',
     logo: 'assets/negocios/uepa-ve/Mira ve.png',
     menu: [
       'assets/negocios/uepa-ve/menu-01.jpg',
@@ -82,7 +82,7 @@ const negocios = [
   {
     id: 'bandeja-coreana',
     nombre: 'Bandeja Coreana',
-    categoria: 'Coreano',
+    categoria: 'Comidas',
     logo: 'assets/negocios/bandeja-coreana/logo.jpg',
     menu: [
       'assets/negocios/bandeja-coreana/menu-01.jpg',
