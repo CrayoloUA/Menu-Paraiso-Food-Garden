@@ -163,7 +163,7 @@ function abrirModal(negocio) {
   }
 
   // Imagen: mostrar en lightbox con fullscreen móvil y pinch-to-zoom
-  const prevMedia = modalContent.querySelector('img, iframe, .pdf-viewer, .menu-html, .img-viewer');
+  const prevMedia = modalContent.querySelector('img, iframe, .pdf-viewer, .menu-html, .img-viewer, .menu-proximamente');
   if (prevMedia) prevMedia.remove();
 
   const isMobileImg = window.innerWidth <= 600;
@@ -172,36 +172,55 @@ function abrirModal(negocio) {
   const viewer = document.createElement('div');
   viewer.className = 'img-viewer';
 
-  const wrapper = document.createElement('div');
-  wrapper.className = 'img-zoom-wrapper';
-
-  // Soporta una imagen sola o un array de páginas
-  const pages = Array.isArray(negocio.menu) ? negocio.menu : [negocio.menu];
-  pages.forEach(src => {
-    const img = document.createElement('img');
-    img.src = src;
-    img.alt = `Menú de ${negocio.nombre}`;
-    img.draggable = false;
-    // Mantener el scroll arriba mientras cargan las páginas (orden 1→2→3)
-    img.addEventListener('load', () => { viewer.scrollTop = 0; });
-    wrapper.appendChild(img);
-  });
-
-  viewer.appendChild(wrapper);
+  const spinner = document.createElement('div');
+  spinner.className = 'menu-spinner';
+  spinner.textContent = 'Cargando menú…';
+  viewer.appendChild(spinner);
   modalContent.appendChild(viewer);
 
   overlay.classList.add('activo');
   document.body.style.overflow = 'hidden';
   viewer.scrollTop = 0;
 
-  if (isMobileImg) initPinchZoom(viewer, wrapper);
+  const pages = Array.isArray(negocio.menu) ? negocio.menu : [negocio.menu];
+
+  const probe = new Image();
+  probe.src = pages[0];
+
+  probe.addEventListener('load', () => {
+    spinner.remove();
+    const wrapper = document.createElement('div');
+    wrapper.className = 'img-zoom-wrapper';
+    pages.forEach(src => {
+      const img = document.createElement('img');
+      img.src = src;
+      img.alt = `Menú de ${negocio.nombre}`;
+      img.draggable = false;
+      wrapper.appendChild(img);
+    });
+    viewer.appendChild(wrapper);
+    requestAnimationFrame(() => {
+      if (isMobileImg) initPinchZoom(viewer, wrapper);
+    });
+  });
+
+  probe.addEventListener('error', () => {
+    viewer.remove();
+    const prox = document.createElement('div');
+    prox.className = 'menu-proximamente';
+    prox.innerHTML = `
+      <h3>Menú próximamente</h3>
+      <p>Este negocio aún no ha enviado su menú.<br>Vuelve pronto.</p>
+    `;
+    modalContent.appendChild(prox);
+  });
 }
 
 function cerrarModal() {
   overlay.classList.remove('activo');
   overlay.classList.remove('modal-fullscreen');
   document.body.style.overflow = '';
-  const prevMedia = modalContent.querySelector('img, iframe, .pdf-viewer, .menu-html, .img-viewer');
+  const prevMedia = modalContent.querySelector('img, iframe, .pdf-viewer, .menu-html, .img-viewer, .menu-proximamente');
   if (prevMedia) prevMedia.remove();
 }
 
