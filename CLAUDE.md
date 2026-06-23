@@ -16,23 +16,40 @@ Landing page mobile-first para **Paraíso Food Garden**, food court ubicado en *
 Menu/
 ├── index.html          # Página principal
 ├── app.js              # Lógica: tarjetas, filtros, modal, visor de menús
+├── negocios.js         # Datos de negocios (array de 11 negocios)
 ├── style.css           # Todos los estilos
+├── sw.js               # Service Worker — cache offline
+├── manifest.json       # PWA manifest
+├── compress.js         # Script de compresión de imágenes (requiere Node + Sharp)
+├── .gitignore          # Excluye node_modules/
 ├── CLAUDE.md           # Este archivo
 └── assets/
     ├── logo-paradiso.svg           # Logo principal del food court
     ├── negocios/                   # Logos e imágenes de menú de cada negocio
     │   ├── placeholder-logo.svg    # Fallback cuando falla un logo
     │   ├── la-cafetera/
-    │   │   ├── Cafetera.jpeg                 # Logo
-    │   │   └── menu_page-0001 (1).jpg        # Imagen del menú
+    │   │   ├── logo.jpg                     # Logo
+    │   │   └── menu-01.jpg                  # Página del menú
     │   ├── dejamu/
     │   ├── satomi-bento/
     │   ├── cafe-pintado/
     │   ├── el-obelisco/
     │   ├── el-bochinche/
+    │   │   ├── logo.jpg
+    │   │   ├── menu-01.jpg
+    │   │   └── menu-02.jpg                  # 2 páginas
     │   ├── cali-coffee-tour/
     │   ├── sabor-peruano/
     │   ├── uepa-ve/
+    │   │   ├── logo.jpg
+    │   │   ├── menu-01.jpg
+    │   │   ├── menu-02.jpg
+    │   │   └── menu-03.jpg                  # 3 páginas
+    │   ├── bandeja-coreana/
+    │   │   ├── logo.jpg
+    │   │   ├── menu-01.jpg
+    │   │   ├── menu-02.jpg
+    │   │   └── menu-03.jpg                  # 3 páginas
     │   └── monster-park/
     └── pdfjs/                      # PDF.js v4 (disponible si se necesita)
 ```
@@ -45,13 +62,14 @@ Menu/
 |----|--------|-----------|-----------|--------|
 | `la-cafetera` | La Cafetera | Café | `imagen` | Listo |
 | `dejamu` | Dejamu | Fusión | `imagen` | Pendiente imagen |
-| `satomi-bento` | Satomi Bento | Japonés | `externo` | Listo (Toteat) |
+| `satomi-bento` | Satomi Bento | Japonés | `externo` | Listo (Toteat — https://menupp.co/satomibento) |
 | `cafe-pintado` | Café Pintado | Café | `imagen` | Pendiente imagen |
-| `el-obelisco` | El Obelisco | Caleño | `imagen` | Pendiente imagen |
-| `el-bochinche` | El Bochinche | Colombiano | `imagen` | Pendiente imagen |
-| `cali-coffee-tour` | Cali Coffee Tour | Café | `externo` | Listo (Menupp.co) |
+| `el-obelisco` | El Obelisco | Caleño | `externo` | Listo (Menupp) |
+| `el-bochinche` | El Bochinche | Colombiano | `imagen` | Listo (2 páginas JPG) |
+| `cali-coffee-tour` | Cali Coffee Tour | Café | `externo` | Listo (Menupp) |
 | `sabor-peruano` | Sabor Peruano | Peruano | `imagen` | Pendiente imagen |
-| `uepa-ve` | Mirá! Uepa'Ve | Wraps & Arepas | `imagen` | Pendiente imagen |
+| `uepa-ve` | Mirá! Uepa'Ve | Wraps & Arepas | `imagen` | Listo (3 páginas JPG) |
+| `bandeja-coreana` | Bandeja Coreana | Coreano | `imagen` | Listo (3 páginas JPG) |
 | `monster-park` | Monster Park | Entretenimiento | `imagen` | Pendiente imagen |
 
 ---
@@ -147,9 +165,24 @@ Los bordes blancos del PDF se recortan automáticamente con el zoom de 4% del vi
 ## Cómo actualizar la imagen del menú de un negocio
 
 1. Preparar la nueva imagen (800px ancho, 80% calidad JPG)
-2. Reemplazar el archivo en `assets/negocios/<id>/menu.jpg`
-3. Si el nombre del archivo cambia, actualizar el campo `menu:` en `app.js`
-4. Hacer commit y push — Netlify actualiza automáticamente
+2. Reemplazar el archivo en `assets/negocios/<id>/menu-0N.jpg`
+3. Si el número de páginas cambia, actualizar el campo `menu:` en `negocios.js`
+4. Correr `node compress.js` para optimizar las imágenes
+5. Hacer commit y push — Netlify actualiza automáticamente
+
+---
+
+## Convención de archivos
+
+- **Logos:** `logo.jpg` o nombre descriptivo — máx 200KB, 500×500px
+- **Menús:** `menu-01.jpg`, `menu-02.jpg`, … — máx 300KB/página, 1000px ancho
+- **Regla:** sin espacios, sin tildes, sin mayúsculas en nombres de archivo
+- **Compresión:** correr `node compress.js` antes de cada push con imágenes nuevas
+
+Cuando hay múltiples páginas de menú, usar array en `negocios.js`:
+```js
+menu: ['assets/negocios/negocio/menu-01.jpg', 'assets/negocios/negocio/menu-02.jpg'],
+```
 
 ---
 
@@ -166,29 +199,48 @@ Para generar el QR una vez desplegado:
 
 ---
 
+## PWA / Offline
+
+La app funciona como PWA instalable en Android y iOS:
+
+- `manifest.json` — define nombre, colores e ícono para pantalla de inicio
+- `sw.js` — service worker que cachea assets en la primera visita
+
+**Al actualizar imágenes:** el service worker sirve desde cache. Para forzar actualización:
+1. Incrementar `CACHE_VERSION` en `sw.js` (ej. `'v1'` → `'v2'`)
+2. Hacer push — el nuevo SW se activa y descarga los archivos frescos
+
+---
+
 ## Estado actual
 
 - [x] Estructura base del sitio
-- [x] 10 negocios con logos
-- [x] Filtros por categoría
+- [x] 11 negocios con logos (incluyendo Bandeja Coreana)
+- [x] Filtros por categoría con animación fade + scale
 - [x] Tarjeta destacada (Cali Coffee Tour)
-- [x] Splash de bienvenida
-- [x] Optimización de imágenes (comprimidas ~60-70%)
+- [x] Splash de bienvenida (solo en primera visita — localStorage)
+- [x] Optimización de imágenes (compress.js — ~90% reducción promedio)
 - [x] Optimización mobile (touch targets, viewport, fuentes subsetadas)
 - [x] Visor fullscreen en móvil para imágenes de menú
 - [x] Pinch-to-zoom en visor de imágenes
 - [x] Zoom centrado en el punto de pellizco
 - [x] Panning al arrastrar con un dedo con zoom activo
 - [x] Doble tap para zoom/reset
+- [x] Spinner de carga mientras carga el menú
+- [x] Modal "Menú próximamente" automático para negocios sin imagen
+- [x] Separación datos/lógica: negocios.js + app.js
+- [x] Convención de nombres de archivo normalizada (menu-0N.jpg)
 - [x] Repositorio en GitHub con auto-deploy a Netlify
 - [x] La Cafetera — imagen del menú lista
 - [x] Satomi Bento — menú externo (Toteat)
-- [x] Cali Coffee Tour — menú externo (Menupp.co)
+- [x] El Obelisco — menú externo (Menupp)
+- [x] El Bochinche — 2 páginas JPG
+- [x] Cali Coffee Tour — menú externo (Menupp)
+- [x] Mirá! Uepa'Ve — 3 páginas JPG
+- [x] Bandeja Coreana — 3 páginas JPG
+- [x] PWA: manifest.json + service worker offline
 - [ ] Dejamu — pendiente imagen del menú
 - [ ] Café Pintado — pendiente imagen del menú
-- [ ] El Obelisco — pendiente imagen del menú
-- [ ] El Bochinche — pendiente imagen del menú
 - [ ] Sabor Peruano — pendiente imagen del menú
-- [ ] Mirá! Uepa'Ve — pendiente imagen del menú
 - [ ] Monster Park — pendiente imagen del menú
 - [ ] Generación del QR final
