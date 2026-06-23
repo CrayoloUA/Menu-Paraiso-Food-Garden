@@ -398,3 +398,8 @@ if (splash) {
     setTimeout(() => splash.remove(), 2500);
   }
 }
+
+/* ── Service Worker ──────────────────────────────────────── */
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('./sw.js');
+}
