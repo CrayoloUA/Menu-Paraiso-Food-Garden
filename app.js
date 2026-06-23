@@ -380,8 +380,13 @@ overlay.addEventListener('touchend', (e) => {
   if (e.changedTouches[0].clientY - touchStartY > 80) cerrarModal();
 }, { passive: true });
 
-/* ── Splash de bienvenida ────────────────────────────────── */
+/* ── Splash de bienvenida (solo primera visita) ──────────── */
 const splash = document.getElementById('splash');
 if (splash) {
-  setTimeout(() => splash.remove(), 2500);
+  if (localStorage.getItem('paraiso_visited')) {
+    splash.remove();
+  } else {
+    localStorage.setItem('paraiso_visited', '1');
+    setTimeout(() => splash.remove(), 2500);
+  }
 }
