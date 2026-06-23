@@ -99,4 +99,14 @@ const negocios = [
     menu: 'assets/negocios/monster-park/menu-01.jpg',
     tipo: 'imagen',
   },
+  // Para agregar un negocio nuevo, copiar este bloque y completar:
+  // {
+  //   id: 'nombre-del-negocio',       <- sin espacios ni tildes
+  //   nombre: 'Nombre del Negocio',   <- como se verá en pantalla
+  //   categoria: 'Categoría',
+  //   logo: 'assets/negocios/nombre-del-negocio/logo.jpg',
+  //   menu: 'assets/negocios/nombre-del-negocio/menu-01.jpg',
+  //   tipo: 'imagen',                 <- 'imagen' o 'externo'
+  //   // si tipo es 'externo', poner la URL completa en el campo menu
+  // },
 ];
