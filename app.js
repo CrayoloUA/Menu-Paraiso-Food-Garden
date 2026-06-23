@@ -50,7 +50,15 @@ function renderFiltros() {
     const cat = btn.dataset.cat;
     document.querySelectorAll('.negocio-card').forEach((card) => {
       const match = cat === 'Todos' || card.dataset.categoria === cat;
-      card.style.display = match ? '' : 'none';
+      if (match) {
+        card.style.display = '';
+        requestAnimationFrame(() => card.classList.remove('oculta'));
+      } else {
+        card.classList.add('oculta');
+        setTimeout(() => {
+          if (card.classList.contains('oculta')) card.style.display = 'none';
+        }, 220);
+      }
     });
   });
 }
