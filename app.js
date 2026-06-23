@@ -207,6 +207,7 @@ function abrirModal(negocio) {
       wrapper.appendChild(img);
     });
     viewer.appendChild(wrapper);
+    viewer.style.overflowY = 'auto';
     requestAnimationFrame(() => {
       if (isMobileImg) initPinchZoom(viewer, wrapper);
     });
@@ -351,6 +352,8 @@ function initPinchZoom(viewer, wrapper) {
       // El menú solo se cierra con el botón X
     }
   });
+
+  apply();
 }
 
 document.getElementById('negocios-grid').addEventListener('click', (e) => {
