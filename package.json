@@ -1,0 +1,27 @@
+{
+  "name": "menu",
+  "version": "1.0.0",
+  "description": "",
+  "main": "app.js",
+  "directories": {
+    "doc": "docs"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/CrayoloUA/Menu-Paraiso-Food-Garden.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/CrayoloUA/Menu-Paraiso-Food-Garden/issues"
+  },
+  "homepage": "https://github.com/CrayoloUA/Menu-Paraiso-Food-Garden#readme",
+  "dependencies": {
+    "sharp": "^0.35.2"
+  }
+}
