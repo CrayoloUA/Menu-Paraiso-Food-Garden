@@ -1,4 +1,4 @@
-const CACHE_VERSION = 'v2';
+const CACHE_VERSION = 'v3';
 const CACHE_STATIC = `paraiso-static-${CACHE_VERSION}`;
 const CACHE_IMAGES = `paraiso-images-${CACHE_VERSION}`;
 
@@ -7,6 +7,7 @@ const STATIC_ASSETS = [
   '/index.html',
   '/app.js',
   '/negocios.js',
+  '/menus.js',
   '/style.css',
   '/assets/logo-paradiso.svg',
   '/assets/negocios/placeholder-logo.svg',
