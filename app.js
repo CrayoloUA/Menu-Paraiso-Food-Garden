@@ -265,15 +265,17 @@ function abrirModal(negocio) {
     if (total > 1) {
       const counter = document.getElementById('modal-page-counter');
       counter.textContent = `1 / ${total}`;
-      const observer = new IntersectionObserver((entries) => {
-        entries.forEach(entry => {
-          if (entry.isIntersecting) {
-            const idx = Array.from(wrapper.querySelectorAll('img')).indexOf(entry.target);
-            if (idx !== -1) counter.textContent = `${idx + 1} / ${total}`;
-          }
+      const imgsList = Array.from(wrapper.querySelectorAll('img'));
+      viewer.addEventListener('scroll', () => {
+        const viewerTop = viewer.getBoundingClientRect().top;
+        let closestIdx = 0;
+        let closestDist = Infinity;
+        imgsList.forEach((img, idx) => {
+          const dist = Math.abs(img.getBoundingClientRect().top - viewerTop);
+          if (dist < closestDist) { closestDist = dist; closestIdx = idx; }
         });
-      }, { root: viewer, threshold: 0.5 });
-      wrapper.querySelectorAll('img').forEach(img => observer.observe(img));
+        counter.textContent = `${closestIdx + 1} / ${total}`;
+      });
     }
 
     requestAnimationFrame(() => {
