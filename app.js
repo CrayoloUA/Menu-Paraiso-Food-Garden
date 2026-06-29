@@ -259,14 +259,13 @@ function abrirModal(negocio) {
     });
     viewer.appendChild(wrapper);
     viewer.style.overflowY = 'auto';
+    // flex centering desplaza imágenes altas por encima del viewport — siempre usar flex-start
+    viewer.style.alignItems = 'flex-start';
+    viewer.scrollTop = 0;
 
     // Indicador de página para menús multipágina
     const total = pages.length;
     if (total > 1) {
-      // En desktop, flex centering desplaza el contenido alto hacia arriba del viewport.
-      // flex-start garantiza que page 1 arranque desde el tope del viewer.
-      viewer.style.alignItems = 'flex-start';
-      viewer.scrollTop = 0;
       const counter = document.getElementById('modal-page-counter');
       counter.textContent = `1 / ${total}`;
       const imgsList = Array.from(wrapper.querySelectorAll('img'));
