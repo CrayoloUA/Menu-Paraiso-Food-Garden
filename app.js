@@ -11,13 +11,14 @@ function renderNegocios() {
       aria-label="Ver menú de ${negocio.nombre}"
       style="--i: ${i}"
     >
-      <div class="card-img-wrap">
+      <div class="card-img-wrap loading">
         <span class="card-categoria">${negocio.categoria}</span>
         <img
           src="${negocio.logo}"
           alt="${negocio.nombre}"
           loading="lazy"
-          onerror="this.src='assets/negocios/placeholder-logo.svg'"
+          onload="this.closest('.card-img-wrap').classList.remove('loading')"
+          onerror="this.src='assets/negocios/placeholder-logo.svg'; this.closest('.card-img-wrap').classList.remove('loading')"
         />
       </div>
       <div class="card-info">
@@ -40,7 +41,14 @@ function renderFiltros() {
   `).join('');
 
   const main = document.querySelector('main');
-  main.insertBefore(bar, document.getElementById('negocios-grid'));
+  const grid = document.getElementById('negocios-grid');
+  main.insertBefore(bar, grid);
+
+  // Buscador — se inserta antes de la barra de filtros
+  const buscadorWrap = document.createElement('div');
+  buscadorWrap.className = 'buscador-wrap';
+  buscadorWrap.innerHTML = '<input class="buscador-input" id="buscador-input" type="search" placeholder="Buscar negocio…" autocomplete="off" />';
+  main.insertBefore(buscadorWrap, bar);
 
   bar.addEventListener('click', (e) => {
     const btn = e.target.closest('.filtro-btn');
@@ -48,6 +56,8 @@ function renderFiltros() {
     bar.querySelectorAll('.filtro-btn').forEach((b) => b.classList.remove('activo'));
     btn.classList.add('activo');
     const cat = btn.dataset.cat;
+    // Limpiar búsqueda al cambiar categoría
+    document.getElementById('buscador-input').value = '';
     document.querySelectorAll('.negocio-card').forEach((card) => {
       const match = cat === 'Todos' || card.dataset.categoria === cat;
       if (match) {
@@ -61,6 +71,27 @@ function renderFiltros() {
       }
     });
   });
+
+  document.getElementById('buscador-input').addEventListener('input', (e) => {
+    const query = e.target.value.trim().toLowerCase();
+    document.querySelectorAll('.negocio-card').forEach((card) => {
+      const negocio = negocios.find(n => n.id === card.dataset.id);
+      const match = !query || negocio.nombre.toLowerCase().includes(query);
+      if (match) {
+        card.style.display = '';
+        requestAnimationFrame(() => card.classList.remove('oculta'));
+      } else {
+        card.classList.add('oculta');
+        setTimeout(() => {
+          if (card.classList.contains('oculta')) card.style.display = 'none';
+        }, 220);
+      }
+    });
+    // Quitar filtro de categoría activo si hay búsqueda
+    if (query) {
+      bar.querySelectorAll('.filtro-btn').forEach(b => b.classList.remove('activo'));
+    }
+  });
 }
 
 renderNegocios();
@@ -70,6 +101,15 @@ renderFiltros();
 const overlay = document.getElementById('modal-overlay');
 const modalContent = document.getElementById('modal-content');
 const btnCerrar = document.getElementById('modal-close');
+
+// Barra inferior: nombre del negocio + contador de página
+const nombreBar = document.createElement('div');
+nombreBar.className = 'modal-nombre-bar';
+nombreBar.innerHTML = '<span id="modal-nombre-text"></span><span class="modal-page-counter" id="modal-page-counter"></span>';
+document.body.appendChild(nombreBar);
+nombreBar.style.display = 'none';
+
+let ultimaTarjetaFocusada = null;
 
 function formatearPrecio(precio) {
   if (precio == null) return 'Consultar';
@@ -100,6 +140,8 @@ function renderMenuHTML(negocio) {
 }
 
 function abrirModal(negocio) {
+  ultimaTarjetaFocusada = document.activeElement;
+
   if (negocio.tipo === 'externo') {
     window.open(negocio.menu, '_blank', 'noopener,noreferrer');
     return;
@@ -118,6 +160,9 @@ function abrirModal(negocio) {
     modalContent.appendChild(wrapper);
     overlay.classList.add('activo');
     document.body.style.overflow = 'hidden';
+    document.getElementById('modal-nombre-text').textContent = negocio.nombre;
+    nombreBar.style.display = 'flex';
+    requestAnimationFrame(() => btnCerrar.focus());
     return;
   }
 
@@ -135,6 +180,9 @@ function abrirModal(negocio) {
     modalContent.appendChild(viewer);
     overlay.classList.add('activo');
     document.body.style.overflow = 'hidden';
+    document.getElementById('modal-nombre-text').textContent = negocio.nombre;
+    nombreBar.style.display = 'flex';
+    requestAnimationFrame(() => btnCerrar.focus());
 
     const pdfUrl = new URL(negocio.menu, window.location.href).href;
 
@@ -188,6 +236,9 @@ function abrirModal(negocio) {
 
   overlay.classList.add('activo');
   document.body.style.overflow = 'hidden';
+  document.getElementById('modal-nombre-text').textContent = negocio.nombre;
+  nombreBar.style.display = 'flex';
+  requestAnimationFrame(() => btnCerrar.focus());
   viewer.scrollTop = 0;
 
   const pages = Array.isArray(negocio.menu) ? negocio.menu : [negocio.menu];
@@ -208,6 +259,23 @@ function abrirModal(negocio) {
     });
     viewer.appendChild(wrapper);
     viewer.style.overflowY = 'auto';
+
+    // Indicador de página para menús multipágina
+    const total = pages.length;
+    if (total > 1) {
+      const counter = document.getElementById('modal-page-counter');
+      counter.textContent = `1 / ${total}`;
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            const idx = Array.from(wrapper.querySelectorAll('img')).indexOf(entry.target);
+            if (idx !== -1) counter.textContent = `${idx + 1} / ${total}`;
+          }
+        });
+      }, { root: viewer, threshold: 0.5 });
+      wrapper.querySelectorAll('img').forEach(img => observer.observe(img));
+    }
+
     requestAnimationFrame(() => {
       if (isMobileImg) initPinchZoom(viewer, wrapper);
     });
@@ -231,6 +299,9 @@ function cerrarModal() {
   document.body.style.overflow = '';
   const prevMedia = modalContent.querySelector('img, iframe, .pdf-viewer, .menu-html, .img-viewer, .menu-proximamente');
   if (prevMedia) prevMedia.remove();
+  nombreBar.style.display = 'none';
+  document.getElementById('modal-page-counter').textContent = '';
+  if (ultimaTarjetaFocusada) ultimaTarjetaFocusada.focus();
 }
 
 /* ── Pinch-to-zoom para visores PDF e imagen ─────────────── */

@@ -165,6 +165,43 @@ img {
   opacity: 0.6;
 }
 
+/* ─── Buscador de negocios ──────────────────────────────── */
+.buscador-wrap {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 1rem 1rem 0;
+}
+
+.buscador-input {
+  width: 100%;
+  padding: 0.6rem 1rem 0.6rem 2.5rem;
+  font-family: var(--font-body);
+  font-size: 0.85rem;
+  color: var(--color-text-inv);
+  background: rgba(255,255,255,0.07);
+  border: 1px solid rgba(245,240,232,0.18);
+  border-radius: 24px;
+  outline: none;
+  transition: border-color 0.2s ease, background 0.2s ease;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='rgba(245,240,232,0.4)' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='11' cy='11' r='8'/%3E%3Cpath d='m21 21-4.35-4.35'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: 0.85rem center;
+  -webkit-appearance: none;
+}
+
+.buscador-input::placeholder {
+  color: rgba(245,240,232,0.35);
+}
+
+.buscador-input:focus {
+  border-color: rgba(201,168,76,0.5);
+  background-color: rgba(255,255,255,0.1);
+}
+
+.buscador-input::-webkit-search-cancel-button {
+  display: none;
+}
+
 /* ─── Barra de filtros ───────────────────────────────────── */
 /* [layout + adapt] scroll horizontal en móvil — mucho mejor con 9+ categorías */
 .filtros-bar {
@@ -321,6 +358,31 @@ img {
 }
 [data-id="bandeja-coreana"] .card-img-wrap img {
   object-fit: contain;
+}
+
+/* ─── Skeleton loader para logos ────────────────────────── */
+@keyframes shimmer {
+  0%   { background-position: -200% center; }
+  100% { background-position:  200% center; }
+}
+
+.card-img-wrap.loading {
+  background: linear-gradient(
+    90deg,
+    #1a2a1a 25%,
+    #243624 50%,
+    #1a2a1a 75%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.4s ease-in-out infinite;
+}
+
+.card-img-wrap.loading img {
+  opacity: 0;
+}
+
+.card-img-wrap img {
+  transition: opacity 0.3s ease;
 }
 
 /* ─── Badge de categoría ─────────────────────────────────── */
@@ -719,6 +781,37 @@ img {
   padding: 2rem 1rem;
   color: #888;
   font-size: 0.85rem;
+}
+
+/* ─── Barra de nombre del negocio en modal ───────────────── */
+.modal-nombre-bar {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: 0.5rem 1rem 0.6rem;
+  background: linear-gradient(to top, rgba(0,0,0,0.75) 0%, transparent 100%);
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  z-index: 1005;
+  pointer-events: none;
+}
+
+.modal-nombre-bar span {
+  font-family: var(--font-body);
+  font-size: 0.78rem;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  color: rgba(245,240,232,0.85);
+  text-transform: uppercase;
+}
+
+.modal-nombre-bar .modal-page-counter {
+  font-size: 0.7rem;
+  font-weight: 400;
+  color: rgba(245,240,232,0.5);
+  margin-left: auto;
 }
 
 /* ─── Footer ─────────────────────────────────────────────── */
